@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Link, useNavigate } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
+import { useContext } from "react";
+import { AuthContext } from "./context/auth/AuthContext";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export const App = () => {
+  const auth = useContext(AuthContext)
+  const navigate = useNavigate()
+  const handleLogout = async () => {
+    await auth.signout();
+    navigate('/app-band/login')
+  }
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="App">
+      <div className="">
+        <ul className="flex gap-5 items-center justify-center">
+          <li>
+            <Link className="hover:text-blue-500" to="/app-band">Dashboard</Link>
+          </li>
+          <li>
+            <Link className="hover:text-blue-500" to="/app-band/grupos">Grupos</Link>
+          </li>
+          <li>
+            {auth.user && <a onClick={handleLogout} className="hover:text-blue-500 cursor-pointer">sair</a>}
+          </li>
+        </ul>
+        <div className="flex items-center justify-center">
+        <p>Seja bem vindor Sr(a): {auth.user?.first_name}</p>
+        </div>
+        <Outlet />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
-
-export default App
