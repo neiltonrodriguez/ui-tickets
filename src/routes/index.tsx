@@ -5,17 +5,17 @@ import Home from "../pages/home/Home";
 
 export const Rotas = createBrowserRouter([
     {
-        path: "/app-band",
+        path: "/",
         element: <RequireAuth><Dashboard /></RequireAuth>,
         children: [
             {
-                path: "/app-band",
+                path: "/",
                 element: <RequireAuth><Home /></RequireAuth>,
             }
         ]
     },
     {
-        path: "/app-band/login",
+        path: "/login",
         element: <Login />
     }
 ]);

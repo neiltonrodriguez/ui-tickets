@@ -14,7 +14,7 @@ export const AuthProvider = ({children}: {children: JSX.Element }) => {
             if(token){
                 const data = await LoginService.check();
                 if(data){
-                    setUser(data)
+                    setUser(data.usuario[0])
                 }
             }
         }
@@ -22,12 +22,13 @@ export const AuthProvider = ({children}: {children: JSX.Element }) => {
         validateToken();
     }, []);
 
-    const signin = async (email: string, password: string) => {
-       const data = await LoginService.login(email, password)
-       if(data.user && data.access_token){
-        setUser(data.user)
-        setTokenStorage(data.access_token);
-        setUserStorage(data.user);
+    const signin = async (username: string, password: string) => {
+       const data = await LoginService.login(username, password)
+       console.log(data)
+       if(data.usuario && data.access){
+        setUser(data.usuario[0])
+        setTokenStorage(data.access);
+        setUserStorage(data.usuario[0]);
         return true;
        }
        return false;
@@ -42,7 +43,7 @@ export const AuthProvider = ({children}: {children: JSX.Element }) => {
     }
 
     const signout = async () => {
-        await LoginService.logout()
+        // await LoginService.logout()
         setUser(null)
         localStorage.removeItem('token');
         localStorage.removeItem('user');

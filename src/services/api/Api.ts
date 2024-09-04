@@ -1,13 +1,14 @@
 import axios, { AxiosInstance } from 'axios';
 
-const axiosInstance: AxiosInstance = axios.create({
+const api: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_URL_API,
     headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
     }
 });
 
-axiosInstance.interceptors.request.use(
+api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -20,4 +21,15 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-export const Api = axiosInstance;
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      // Lidar com erros, como redirecionar para login em caso de 401
+      if (error.response?.status === 401) {
+        // Lógica para redirecionar o usuário
+      }
+      return Promise.reject(error);
+    }
+  );
+
+export const Api = api;

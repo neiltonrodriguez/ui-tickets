@@ -1,9 +1,9 @@
 import { Api } from "../Api";
 import { ApiException } from "../ApiExceptions";
 
-const login = async (email: string, password: string) => {
+const login = async (username: string, password: string) => {
     try {
-        const { data } = await Api.post('/login', {email, password});
+        const { data } = await Api.post('/login/', {username, password});
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')
@@ -21,7 +21,7 @@ const logout = () => {
 };
 const check = async () => {
     try {
-        const { data }  = await Api.post('/me');
+        const { data }  = await Api.post('/login/user/checktoken/');
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao checkar token na Api')
