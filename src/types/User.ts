@@ -1,7 +1,7 @@
 export type User = {
-    conta: string;
+    id: number;
+    nome: string;
     email: string;
     foto: string;
-    nomecompleto: string;
-    tipo: Int16Array;
+    tipo: number;
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { AuthContext } from "./AuthContext"
 import { User } from "../../types"
 import { LoginService } from "../../services/api/login/LoginService"
+import { ApiException } from '../../services/api/ApiExceptions'; 
 
 
 
@@ -14,7 +15,7 @@ export const AuthProvider = ({children}: {children: JSX.Element }) => {
             if(token){
                 const data = await LoginService.check();
                 if(data){
-                    setUser(data.usuario[0])
+                    setUser(data as User)
                 }
             }
         }
@@ -24,11 +25,15 @@ export const AuthProvider = ({children}: {children: JSX.Element }) => {
 
     const signin = async (username: string, password: string) => {
        const data = await LoginService.login(username, password)
-       console.log(data)
+    //    console.log(data)
+    if (data instanceof ApiException) {
+        console.error(data.message);  // Trate o erro de forma apropriada
+        return false;
+    }
        if(data.usuario && data.access){
-        setUser(data.usuario[0])
+        setUser(data.usuario);
         setTokenStorage(data.access);
-        setUserStorage(data.usuario[0]);
+        setUserStorage(data.usuario);
         return true;
        }
        return false;
