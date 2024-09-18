@@ -17,7 +17,10 @@ const NavBar = () => {
                 <div className="w-full px-5 py-3 flex items-center justify-between max-w-7xl m-auto">
                     <img src={Logo} className="h-12" />
                     <ul className="flex text-white flex-row gap-5 items-center justify-center">
-                        <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/">Home</Link>
+                        <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/">Dashboard</Link>
+                        <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/user">Usuario</Link>
+                        <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/ldap">LDAP</Link>
+                        <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/tickets">Chamados</Link>
                         <button onClick={handleLogout} type="button"><FaRightFromBracket /></button>
 
 
