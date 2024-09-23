@@ -1,13 +1,17 @@
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { AuthContext } from "../../context/auth/AuthContext";
+import { DomainService } from "../../services/api/domain/DomainService";
 import { useNavigate } from "react-router-dom";
 import fotoLogin from '../../assets/img/login.jpg';
+import { Domain } from "../../types";
 
 export const Login = () => {
   const auth = useContext(AuthContext)
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedDomain, setSelectedDomain] = useState('');
+  const [domain, setDomain] = useState<Domain[]>([]);
 
   const handleLogin = async () => {
     if (username && password) {
@@ -19,19 +23,45 @@ export const Login = () => {
     }
   }
 
+  useEffect(() => {
+    const getDomain = async () => {
+      try {
+        const result = await DomainService.getAllDomain();
+        console.log(result)
+        setDomain(result as Domain[]);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getDomain();
+  }, []);
+
   return (
     <div>
       <section className="dark:bg-gray-900">
         <div className="flex max-w-7xl h-screen items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div className="flex-1 w-full md:flex items-center hidden justify-center">
-          <img src={fotoLogin} className="w-96" />
+            <img src={fotoLogin} className="w-96" />
           </div>
           <div
-            className="w-full shadow-lg flex-1 bg-white h-96 rounded-lg">
+            className="w-full shadow-lg flex-1 bg-white h-auto rounded-lg">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                 Digite seus dados de acesso
               </h1>
+
+              <div>
+                <label className="label-form">Domínio</label>
+                <select value={selectedDomain} onChange={(e) => setSelectedDomain(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  {Array.isArray(domain) && domain.map((d) => (
+                    <option key={d.id} value={d.id}>{d.nome}</option>
+                  ))}
+
+                </select>
+
+              </div>
 
               <div>
                 <label className="label-form">Usuário</label>

@@ -2,19 +2,19 @@ import { useEffect, useState } from "react"
 import { AuthContext } from "./AuthContext"
 import { User } from "../../types"
 import { LoginService } from "../../services/api/login/LoginService"
-import { ApiException } from '../../services/api/ApiExceptions'; 
+import { ApiException } from '../../services/api/ApiExceptions';
 
 
 
-export const AuthProvider = ({children}: {children: JSX.Element }) => {
+export const AuthProvider = ({ children }: { children: JSX.Element }) => {
     const [user, setUser] = useState<User | null>(null)
 
     useEffect(() => {
         const validateToken = async () => {
             const token = localStorage.getItem('token');
-            if(token){
+            if (token) {
                 const data = await LoginService.check();
-                if(data){
+                if (data.code === 'token_valid') {
                     setUser(data as User)
                 }
             }
@@ -24,21 +24,22 @@ export const AuthProvider = ({children}: {children: JSX.Element }) => {
     }, []);
 
     const signin = async (username: string, password: string) => {
-       const data = await LoginService.login(username, password)
-    //    console.log(data)
-    if (data instanceof ApiException) {
-        console.error(data.message);  // Trate o erro de forma apropriada
+        const data = await LoginService.login(username, password)
+        console.log(data)
+        if (data instanceof ApiException) {
+            console.error(data.message);  // Trate o erro de forma apropriada
+            return false;
+        }
+        if (data.user.length > 0 && data.access) {
+            setUser(data.user[0]);
+            setTokenStorage(data.access);
+            setUserStorage(data.user[0]);
+            return true;
+        }
         return false;
-    }
-       if(data.usuario && data.access){
-        setUser(data.usuario);
-        setTokenStorage(data.access);
-        setUserStorage(data.usuario);
-        return true;
-       }
-       return false;
 
     }
+
 
     const setTokenStorage = (token: string) => {
         localStorage.setItem('token', token)
@@ -54,7 +55,7 @@ export const AuthProvider = ({children}: {children: JSX.Element }) => {
         localStorage.removeItem('user');
     }
     return (
-        <AuthContext.Provider value={{user, signin, signout}}>
+        <AuthContext.Provider value={{ user, signin, signout }}>
             {children}
         </AuthContext.Provider>
     )

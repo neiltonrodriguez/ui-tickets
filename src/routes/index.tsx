@@ -5,6 +5,8 @@ import Home from "../pages/home/Home";
 import Tickets from "../pages/ticket/Tickets";
 import User from "../pages/user/User";
 import Ldap from "../pages/ldap/Ldap";
+import UserDetails from "../pages/user/UserDetails";
+import LdapDetails from "../pages/ldap/LdapDetails";
 
 export const Rotas = createBrowserRouter([
     {
@@ -24,8 +26,16 @@ export const Rotas = createBrowserRouter([
                 element: <RequireAuth><User /></RequireAuth>,
             },
             {
+                path: "/user/:id",
+                element: <RequireAuth><UserDetails /></RequireAuth>,
+            },
+            {
                 path: "/ldap",
                 element: <RequireAuth><Ldap /></RequireAuth>,
+            },
+            {
+                path: "/ldap/:id",
+                element: <RequireAuth><LdapDetails /></RequireAuth>,
             }
         ]
     },
