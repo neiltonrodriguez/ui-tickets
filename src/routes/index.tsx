@@ -26,7 +26,7 @@ export const Rotas = createBrowserRouter([
                 element: <RequireAuth><User /></RequireAuth>,
             },
             {
-                path: "/user/:id",
+                path: "/user/:id/:mode",
                 element: <RequireAuth><UserDetails /></RequireAuth>,
             },
             {

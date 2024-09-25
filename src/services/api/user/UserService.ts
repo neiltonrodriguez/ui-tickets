@@ -2,10 +2,17 @@ import { Users } from "../../../types";
 import { Api } from "../Api";
 import { ApiException } from "../ApiExceptions";
 
-const getAllUser = async () => {
+const getAllUser = async (offset: number = 1, limit: number = 10) => {
     try {
 
-        const { data } = await Api.get('/users/');
+        const { data } = await Api.get('/users/',
+            {
+                params: {
+                  offset,   // Número da página
+                  limit   // Número de usuários por página
+                }
+              }
+        );
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao fazer getAll de User na Api')

@@ -5,15 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
 
 const User = () => {
-  const [user, setUser] = useState<Users[]>([]);
+  const [users, setUsers] = useState<Users[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [usersPerPage] = useState(10);
   const navigate = useNavigate();
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Tem certeza que deseja deletar este usuário?")) {
       try {
         await UserService.deleteUser(id);
-        setUser(user.filter((u) => u.id !== id));
+        setUsers(users.filter((u) => u.id !== id));
       } catch (error) {
         console.error('Erro ao deletar usuário:', error);
         alert('Erro ao deletar usuário.');
@@ -24,9 +27,9 @@ const User = () => {
   useEffect(() => {
     const getAllUsers = async () => {
       try {
-        const result = await UserService.getAllUser();
-        console.log(result)
-        setUser(result.results as Users[]);
+        const result = await UserService.getAllUser(currentPage, usersPerPage);
+        setUsers(result.results as Users[]); // Atualiza o estado com os usuários da página atual
+        setTotal(result.count); // Atualiza o total de usuários
       } catch (error) {
         console.error(error);
       } finally {
@@ -35,12 +38,16 @@ const User = () => {
     };
 
     getAllUsers();
-  }, []);
+  }, [currentPage, usersPerPage]);
+
   if (loading) return <p>Loading...</p>;
+
+  const totalPages = Math.ceil(total / usersPerPage);
+
   return (
     <div className="container mx-auto">
-      <p className="text-black text-4xl font-bold text-center mb-6">
-      </p>
+      <p className="text-black text-4xl font-bold text-center mb-6">Usuários</p>
+      <button className="bg-green-600 rounded-md px-5 py-1 shadow-md my-3 text-white hover:bg-green-400 duration-200" onClick={() => navigate(`/user/0/new`)}>Novo Usuário</button>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
@@ -56,19 +63,18 @@ const User = () => {
             </tr>
           </thead>
           <tbody>
-            {user.map((t: Users) => (
-              // t.id = 1,
-              <tr key={t.username} className="border-t hover:bg-gray-50 cursor-pointer">
-                <td onClick={() => navigate(`/user/${t.id}`)} className="text-left py-3 px-4">{t.first_name}</td>
-                <td onClick={() => navigate(`/user/${t.id}`)} className="text-left py-3 px-4">{t.username}</td>
-                <td onClick={() => navigate(`/user/${t.id}`)} className="text-left py-3 px-4">{t.email}</td>
-                <td onClick={() => navigate(`/user/${t.id}`)} className="text-left py-3 px-4">{t.cell_phone}</td>
-                <td onClick={() => navigate(`/user/${t.id}`)} className="text-left py-3 px-4">{t.is_active ? 'sim' : 'não'}</td>
-                <td onClick={() => navigate(`/user/${t.id}`)} className="text-left py-3 px-4">{t.attendant ? 'sim' : 'não'}</td>
-                <td onClick={() => navigate(`/user/${t.id}`)} className="text-left py-3 px-4">{t.admin ? 'sim' : 'não'}</td>
-                <td className="text-left py-3 px-4">
-                <button
-                    onClick={() => handleDelete(t.id)}
+            {users.map((user: Users) => (
+              <tr key={user.id} className="border-t hover:bg-gray-50 cursor-pointer">
+                <td onClick={() => navigate(`/user/${user.id}/edit/`)} className="text-left py-3 px-4">{user.first_name}</td>
+                <td onClick={() => navigate(`/user/${user.id}/edit`)} className="text-left py-3 px-4">{user.username}</td>
+                <td onClick={() => navigate(`/user/${user.id}/edit`)} className="text-left py-3 px-4">{user.email}</td>
+                <td onClick={() => navigate(`/user/${user.id}/edit`)} className="text-left py-3 px-4">{user.cell_phone}</td>
+                <td onClick={() => navigate(`/user/${user.id}/edit`)} className="text-left py-3 px-4">{user.is_active ? 'sim' : 'não'}</td>
+                <td onClick={() => navigate(`/user/${user.id}/edit`)} className="text-left py-3 px-4">{user.attendant ? 'sim' : 'não'}</td>
+                <td onClick={() => navigate(`/user/${user.id}/edit`)} className="text-left py-3 px-4">{user.admin ? 'sim' : 'não'}</td>
+                <td className="text-left py-3 px-4 flex items-center justify-center">
+                  <button
+                    onClick={() => handleDelete(user.id as number)}
                     className="text-red-600 hover:text-red-800"
                   >
                     <FaTrash />
@@ -79,8 +85,37 @@ const User = () => {
           </tbody>
         </table>
       </div>
-    </div>
-  )
-}
 
-export default User
+      {/* Paginação */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="mx-1 px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+        >
+          Anterior
+        </button>
+
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`mx-1 px-3 py-1 rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+          >
+            {index + 1}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="mx-1 px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+        >
+          Próximo
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default User;

@@ -13,7 +13,8 @@ export const Login = () => {
   const [selectedDomain, setSelectedDomain] = useState('');
   const [domain, setDomain] = useState<Domain[]>([]);
 
-  const handleLogin = async () => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (username && password) {
       const isLogged = await auth.signin(username, password)
       console.log(isLogged)
@@ -27,8 +28,8 @@ export const Login = () => {
     const getDomain = async () => {
       try {
         const result = await DomainService.getAllDomain();
-        console.log(result)
-        setDomain(result as Domain[]);
+        console.log(result.results)
+        setDomain(result.results as Domain[]);
       } catch (error) {
         console.error(error);
       }
@@ -44,7 +45,7 @@ export const Login = () => {
           <div className="flex-1 w-full md:flex items-center hidden justify-center">
             <img src={fotoLogin} className="w-96" />
           </div>
-          <div
+          <form onSubmit={handleLogin}
             className="w-full shadow-lg flex-1 bg-white h-auto rounded-lg">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
@@ -52,15 +53,18 @@ export const Login = () => {
               </h1>
 
               <div>
-                <label className="label-form">Domínio</label>
-                <select value={selectedDomain} onChange={(e) => setSelectedDomain(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  {Array.isArray(domain) && domain.map((d) => (
-                    <option key={d.id} value={d.id}>{d.nome}</option>
-                  ))}
+                {domain.length > 0 ?
+                  <div>
+                    <label className="label-form">Domínio</label>
+                    <select value={selectedDomain} onChange={(e) => setSelectedDomain(e.target.value)}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      {Array.isArray(domain) && domain.map((d) => (
+                        <option key={d.id} value={d.id}>{d.nome}</option>
+                      ))}
 
-                </select>
-
+                    </select>
+                  </div>
+                  : ''}
               </div>
 
               <div>
@@ -77,12 +81,12 @@ export const Login = () => {
                 />
               </div>
 
-              <button type="submit" onClick={handleLogin}
+              <button type="submit"
                 className="w-full text-black bg-orange-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign
                 in</button>
 
             </div>
-          </div>
+          </form>
 
         </div>
       </section>

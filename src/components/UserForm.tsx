@@ -2,23 +2,34 @@ import React, { useEffect, useState } from 'react';
 import { Users } from '../types';
 
 type UserFormProps = {
-  userData: Users;
+  userData: Users | null; // Permite que seja null quando criando um novo usuário
   onSave: (user: Users) => void;
+  isEditMode: boolean; // Nova prop para determinar o modo
 };
 
-const UserForm: React.FC<UserFormProps> = ({ userData, onSave }) => {
-  const [user, setUser] = useState<Users>(userData);
+const UserForm: React.FC<UserFormProps> = ({ userData, onSave, isEditMode }) => {
+  const [user, setUser] = useState<Users>({
+    first_name: '',
+    last_name: '',
+    username: '',
+    email: '',
+    phone: '',
+    cell_phone: '',
+    is_active: false,
+    attendant: false,
+    admin: false,
+  });
 
   useEffect(() => {
-    setUser(userData);
+    if (userData) {
+      setUser(userData);
+    }
   }, [userData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    
-    // Para checkboxes, verificamos se o tipo é checkbox e, se sim, usamos 'checked', caso contrário, usamos 'value'
     const updatedValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
-  
+
     setUser(prevUser => ({
       ...prevUser,
       [name]: updatedValue,
@@ -61,7 +72,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, onSave }) => {
           name="username"
           value={user.username}
           onChange={handleChange}
-          disabled
+          disabled={isEditMode} // Desabilitar se em modo de edição
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
         />
       </div>

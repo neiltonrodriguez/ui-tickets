@@ -5,7 +5,7 @@ import { Users } from '../../types';
 import UserForm from '../../components/UserForm'; // Importando o UserForm
 
 const UserDetails = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, mode } = useParams<{ id: string, mode: string }>();
   const [user, setUser] = useState<Users | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,17 +23,34 @@ const UserDetails = () => {
       }
     };
 
-    getUserById();
-  }, [id]);
+    if (mode === 'edit') {
+      getUserById();
+    } else {
+      setLoading(false); // Se for criar um novo usuário, não precisa carregar dados
+    }
+  }, [id, mode]);
 
   const handleSave = async (updatedUser: Users) => {
-    try {
-      await UserService.updateUser(updatedUser); // Atualize o método no seu UserService
-      setUser(updatedUser); // Atualiza o estado com os novos dados
-      alert('Usuário atualizado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao atualizar usuário:', error);
-      alert('Erro ao atualizar usuário.');
+    if (mode === 'new') {
+      try {
+        await UserService.createUser(updatedUser); // Atualize o método no seu UserService
+        alert('Usuário criado com sucesso!');
+        return;
+      } catch (error) {
+        console.error('Erro ao criar usuário:', error);
+        alert('Erro ao criar usuário.');
+        return;
+      }
+
+    } else if (mode === 'edit') {
+      try {
+        await UserService.updateUser(updatedUser); // Atualize o método no seu UserService
+        setUser(updatedUser); // Atualiza o estado com os novos dados
+        alert('Usuário atualizado com sucesso!');
+      } catch (error) {
+        console.error('Erro ao atualizar usuário:', error);
+        alert('Erro ao atualizar usuário.');
+      }
     }
   };
 
@@ -41,12 +58,13 @@ const UserDetails = () => {
   if (error) return <p>{error}</p>;
 
   return (
+
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Detalhes do Usuário</h1>
-      {user ? (
-        <UserForm userData={user} onSave={handleSave} />
+      {user && mode != 'new' ? (
+        <UserForm userData={user} onSave={handleSave} isEditMode={true} />
       ) : (
-        <p>Usuário não encontrado.</p>
+        <UserForm userData={user} onSave={handleSave} isEditMode={false} />
       )}
     </div>
   );
