@@ -8,8 +8,8 @@ const getAllUser = async (offset: number = 1, limit: number = 10) => {
         const { data } = await Api.get('/users/',
             {
                 params: {
-                  offset,   // Número da página
-                  limit   // Número de usuários por página
+                  offset,
+                  limit
                 }
               }
         );

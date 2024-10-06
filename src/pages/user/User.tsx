@@ -27,9 +27,10 @@ const User = () => {
   useEffect(() => {
     const getAllUsers = async () => {
       try {
-        const result = await UserService.getAllUser(currentPage, usersPerPage);
-        setUsers(result.results as Users[]); // Atualiza o estado com os usuários da página atual
-        setTotal(result.count); // Atualiza o total de usuários
+        const offset = (currentPage - 1) * usersPerPage; // Calcular o offset
+        const result = await UserService.getAllUser(offset, usersPerPage);
+        setUsers(result.results as Users[]);
+        setTotal(result.count);
       } catch (error) {
         console.error(error);
       } finally {
@@ -86,7 +87,6 @@ const User = () => {
         </table>
       </div>
 
-      {/* Paginação */}
       <div className="flex justify-center mt-4">
         <button
           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}

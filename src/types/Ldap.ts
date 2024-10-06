@@ -1,5 +1,5 @@
 export type Ldap = {
-    id: number
+    id?: number
     title: string;
     host: string;
     provider: number;

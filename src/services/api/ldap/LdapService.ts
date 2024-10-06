@@ -2,10 +2,17 @@ import { Ldap } from "../../../types";
 import { Api } from "../Api";
 import { ApiException } from "../ApiExceptions";
 
-const getAllLdap = async () => {
+const getAllLdap = async (offset: number = 1, limit: number = 10) => {
     try {
 
-        const { data } = await Api.get('/ldaps/');
+        const { data } = await Api.get('/ldaps/',
+            {
+                params: {
+                  offset,
+                  limit  
+                }
+              }
+        );
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao fazer getAll de Ldap na Api')
@@ -49,7 +56,7 @@ const createLdap = async (ldap: Ldap) => {
 const deleteLdap = async (id: number) => {
     try {
 
-        const { data } = await Api.delete(`/ldapss/${id}`);
+        const { data } = await Api.delete(`/ldaps/${id}`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao deletar Ldap na Api')

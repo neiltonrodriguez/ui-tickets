@@ -4,11 +4,13 @@ import { LdapService } from '../../services/api/ldap/LdapService';
 import { Ldap } from '../../types';
 import LdapForm from '../../components/LdapForm';
 
+
 const LdapDetails = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, mode } = useParams<{ id: string, mode: string }>();
   const [ldap, setLdap] = useState<Ldap | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const getLdapById = async () => {
@@ -23,17 +25,34 @@ const LdapDetails = () => {
       }
     };
 
-    getLdapById();
-  }, [id]);
+    if (mode === 'edit') {
+      getLdapById();
+    } else {
+      setLoading(false);
+    }
+  }, [id, mode]);
 
-  const handleSave = async (updateLdap: Ldap) => {
-    try {
-      await LdapService.updateLdap(updateLdap); // Atualize o método no seu UserService
-      setLdap(updateLdap); // Atualiza o estado com os novos dados
-      alert('Ldap atualizado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao atualizar ldap:', error);
-      alert('Erro ao atualizar ldap.');
+ 
+
+  const handleSave = async (updatedLdap: Ldap) => {
+    if (mode === 'new') {
+      try {
+        await LdapService.createLdap(updatedLdap);
+        // alert('Ldap criado com sucesso!');
+        return;
+      } catch (error) {
+        // alert('Erro ao criar ldap.');
+        return;
+      }
+
+    } else if (mode === 'edit') {
+      try {
+        await LdapService.updateLdap(updatedLdap); 
+        setLdap(updatedLdap); 
+        // alert('ldap atualizado com sucesso!');
+      } catch (error) {
+        // alert('Erro ao atualizar ldap.');
+      }
     }
   };
 
@@ -41,12 +60,14 @@ const LdapDetails = () => {
   if (error) return <p>{error}</p>;
 
   return (
+
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Detalhes do Ldap</h1>
-      {ldap ? (
-        <LdapForm ldapData={ldap} onSave={handleSave} />
+      
+      {ldap && mode != 'new' ? (
+        <LdapForm ldapData={ldap} onSave={handleSave} isEditMode={true} />
       ) : (
-        <p>Usuário não encontrado.</p>
+        <LdapForm ldapData={ldap} onSave={handleSave} isEditMode={false} />
       )}
     </div>
   );

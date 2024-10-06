@@ -9,6 +9,7 @@ const UserDetails = () => {
   const [user, setUser] = useState<Users | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
 
   useEffect(() => {
     const getUserById = async () => {
@@ -26,15 +27,17 @@ const UserDetails = () => {
     if (mode === 'edit') {
       getUserById();
     } else {
-      setLoading(false); // Se for criar um novo usuário, não precisa carregar dados
+      setLoading(false);
     }
   }, [id, mode]);
+
+  
 
   const handleSave = async (updatedUser: Users) => {
     if (mode === 'new') {
       try {
-        await UserService.createUser(updatedUser); // Atualize o método no seu UserService
-        alert('Usuário criado com sucesso!');
+        await UserService.createUser(updatedUser);
+        // alert('Usuário criado com sucesso!');
         return;
       } catch (error) {
         console.error('Erro ao criar usuário:', error);
@@ -44,9 +47,9 @@ const UserDetails = () => {
 
     } else if (mode === 'edit') {
       try {
-        await UserService.updateUser(updatedUser); // Atualize o método no seu UserService
-        setUser(updatedUser); // Atualiza o estado com os novos dados
-        alert('Usuário atualizado com sucesso!');
+        await UserService.updateUser(updatedUser);
+        setUser(updatedUser);
+        // alert('Usuário atualizado com sucesso!');
       } catch (error) {
         console.error('Erro ao atualizar usuário:', error);
         alert('Erro ao atualizar usuário.');

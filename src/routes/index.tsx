@@ -34,9 +34,9 @@ export const Rotas = createBrowserRouter([
                 element: <RequireAuth><Ldap /></RequireAuth>,
             },
             {
-                path: "/ldap/:id",
+                path: "/ldap/:id/:mode",
                 element: <RequireAuth><LdapDetails /></RequireAuth>,
-            }
+            },
         ]
     },
     {
