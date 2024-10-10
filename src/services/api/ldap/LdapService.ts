@@ -31,6 +31,17 @@ const getLdapByID = async (id: string) => {
 
 };
 
+const getLdapAtributes = async (id: string) => {
+    try {
+
+        const { data } = await Api.get(`/ldaps/${id}/attributes`);	
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao fazer get atributes')
+    }
+
+};
+
 const updateLdap = async (ldap: Ldap) => {
     try {
 
@@ -70,5 +81,6 @@ export const LdapService = {
     getLdapByID,
     updateLdap,
     createLdap,
-    deleteLdap
+    deleteLdap,
+    getLdapAtributes
 }

@@ -19,6 +19,7 @@ const NavBar = () => {
                     <ul className="flex text-white flex-row gap-5 items-center justify-center">
                         <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/">Dashboard</Link>
                         <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/user">Usuario</Link>
+                        <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/group">Grupos</Link>
                         <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/ldap">LDAP</Link>
                         <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/tickets">Chamados</Link>
                         <button onClick={handleLogout} type="button"><FaRightFromBracket /></button>
