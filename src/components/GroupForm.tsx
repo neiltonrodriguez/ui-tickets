@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Groups, UserForGroup, UserInGroup } from '../types';
+import { Groups, UserInGroup } from '../types';
 import { GroupService } from '../services/api/group/GroupService';
 
 
 type GroupFormProps = {
     groupData: Groups | null;
-    onSave: (namegroup: string, user: UserForGroup) => void;
+    // onSave: (namegroup: string, user: UserForGroup) => void;
 };
 
-const GroupForm: React.FC<GroupFormProps> = ({ groupData, onSave}) => {
+const GroupForm: React.FC<GroupFormProps> = ({ groupData}) => {
     const [group, setGroup] = useState<Groups>({
         id: 0,
         group_name: '',
@@ -39,23 +39,23 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData, onSave}) => {
 
     }, [group, userInGroup]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, type } = e.target;
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    //     const { name, value, type } = e.target;
 
-        const updatedValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
-        setGroup(prevLdap => ({
-            ...prevLdap,
-            [name]: updatedValue,
-        }));
-    };
+    //     const updatedValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+    //     setGroup(prevLdap => ({
+    //         ...prevLdap,
+    //         [name]: updatedValue,
+    //     }));
+    // };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const groupToSave = { ...group };
+    // const handleSubmit = (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     const groupToSave = { ...group };
 
-        // onSave(groupToSave);
-        handleTabChange('membros');
-    };
+    //     // onSave(groupToSave);
+    //     handleTabChange('membros');
+    // };
 
 
     const handleTabChange = (tab: string) => {

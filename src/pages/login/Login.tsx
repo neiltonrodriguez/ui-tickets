@@ -28,7 +28,7 @@ export const Login = () => {
     const getDomain = async () => {
       try {
         const result = await DomainService.getAllDomain();
-        console.log(result.results)
+        // console.log(result.results)
         setDomain(result.results as Domain[]);
       } catch (error) {
         console.error(error);

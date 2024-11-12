@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Ldap } from '../types';
-import { LdapService } from '../services/api/ldap/LdapService';
+// import { LdapService } from '../services/api/ldap/LdapService';
 
 
 type LdapFormProps = {

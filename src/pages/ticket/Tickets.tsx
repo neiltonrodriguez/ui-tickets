@@ -18,7 +18,7 @@ const Tickets = () => {
     const getUserData = async () => {
       try {
         const result = await TicketService.getAllTickets();
-        console.log(result)
+        console.log(filteredData)
         setTicket(result as Ticket[]);
       } catch (error) {
         console.error(error);

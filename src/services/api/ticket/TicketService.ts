@@ -1,4 +1,4 @@
-import { Api } from "../Api";
+// import { Api } from "../Api";
 import { ApiException } from "../ApiExceptions";
 
 const getAllTickets = async () => {
