@@ -5,6 +5,7 @@ const getAllTickets = async () => {
     try {
         const data = [
                     {
+                        "id": 1,
                         "code": 223,
                         "status": true,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -20,6 +21,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 2,
                         "code": 43,
                         "status": false,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -35,6 +37,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 3,
                         "code": 3204,
                         "status": true,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -50,6 +53,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 4,
                         "code": 223,
                         "status": true,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -65,6 +69,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 5,
                         "code": 43,
                         "status": false,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -80,6 +85,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 6,
                         "code": 223,
                         "status": true,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -95,6 +101,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 7,
                         "code": 223,
                         "status": true,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -110,6 +117,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 8,
                         "code": 43,
                         "status": false,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -125,6 +133,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 9,
                         "code": 3204,
                         "status": true,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -140,6 +149,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 10,
                         "code": 223,
                         "status": true,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -155,6 +165,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 11,
                         "code": 43,
                         "status": false,
                         "hora_solicitacao": "2019-07-01T14:00:00",
@@ -170,6 +181,7 @@ const getAllTickets = async () => {
                         "tempo_de_atendimento": "00:00:00"
                     },
                     {
+                        "id": 12,
                         "code": 223,
                         "status": true,
                         "hora_solicitacao": "2019-07-01T14:00:00",

@@ -12,6 +12,7 @@ const Ldaps = () => {
   const [ldapsPerPage] = useState(10);
   const navigate = useNavigate();
 
+
   const handleDelete = async (id: number) => {
     if (window.confirm("Tem certeza que deseja deletar este usuário?")) {
       try {

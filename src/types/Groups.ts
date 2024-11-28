@@ -1,4 +1,4 @@
 export type Groups = {
-    id?: number;
+    id: number;
     group_name: string;
 }

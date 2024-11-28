@@ -1,4 +1,5 @@
 export type Ticket = {
+    id: number;
     code: number;
     status: boolean;
     hora_solicitacao: string;

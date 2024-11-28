@@ -25,9 +25,7 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
 
     const signin = async (username: string, password: string) => {
         const data = await LoginService.login(username, password)
-        console.log(data)
-        if (data instanceof ApiException) {
-            console.error(data.message);  // Trate o erro de forma apropriada
+        if (data instanceof ApiException) {// Trate o erro de forma apropriada
             return false;
         }
         if (data.user.length > 0 && data.access) {

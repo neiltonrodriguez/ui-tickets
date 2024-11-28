@@ -11,13 +11,12 @@ export const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [selectedDomain, setSelectedDomain] = useState('');
-  const [domain, setDomain] = useState<Domain[]>([]);
+  const [domain, setDomain] = useState<Domain[] | null>([]);
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (username && password) {
       const isLogged = await auth.signin(username, password)
-      console.log(isLogged)
       if (isLogged) {
         navigate('/')
       }
@@ -28,7 +27,6 @@ export const Login = () => {
     const getDomain = async () => {
       try {
         const result = await DomainService.getAllDomain();
-        // console.log(result.results)
         setDomain(result.results as Domain[]);
       } catch (error) {
         console.error(error);
@@ -53,7 +51,7 @@ export const Login = () => {
               </h1>
 
               <div>
-                {domain.length > 0 ?
+                {domain && domain.length > 0 ?
                   <div>
                     <label className="label-form">Domínio</label>
                     <select value={selectedDomain} onChange={(e) => setSelectedDomain(e.target.value)}

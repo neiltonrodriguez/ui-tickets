@@ -6,19 +6,19 @@ import GroupForm from '../../components/GroupForm';
 
 
 const GroupDetails = () => {
-    const { id } = useParams<{ id: string }>();
+    const { name } = useParams<{ name: string }>();
     const [group, setGroup] = useState<Groups | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
 
     useEffect(() => {
-        const getGroupById = async () => {
+        const getGroupByName = async () => {
             try {
 
-                const result = await GroupService.getGroupByID(id as '');
-                // console.log(result);
-                setGroup(result);
+                const result = await GroupService.getGroupByName(name as '');
+                console.log(result);
+                setGroup(result.results[0]);
             } catch (err) {
                 setError('Erro ao carregar os dados do grupo.');
                 console.error(err);
@@ -27,9 +27,9 @@ const GroupDetails = () => {
             }
         };
 
-        getGroupById();
+        getGroupByName();
 
-    }, [id]);
+    }, [name]);
 
 
 

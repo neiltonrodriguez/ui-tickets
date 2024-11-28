@@ -2,28 +2,35 @@ import { UserForGroup } from "../../../types";
 import { Api } from "../Api";
 import { ApiException } from "../ApiExceptions";
 
-const getAllGroup = async (offset: number = 1, limit: number = 10) => {
+const getAllGroup = async (offset: number = 1, limit: number = 10, search: string = '') => {
     try {
-
-        const { data } = await Api.get('/usergroups/',
-            {
-                params: {
-                  offset,
-                  limit
-                }
-              }
-        );
+        const { data } = await Api.get('/usergroups/', {
+            params: {
+                offset,
+                limit,
+                search  // Passa o termo de pesquisa para a API
+            }
+        });
         return data;
     } catch (error: any) {
-        return new ApiException(error.message || 'Error ao fazer getAll de Group na Api')
+        return new ApiException(error.message || 'Error ao fazer getAll de Group na Api');
     }
-
 };
 
 const getGroupByID = async (id: string) => {
     try {
 
         const { data } = await Api.get('/usergroups/' + id);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao fazer getById de User na Api')
+    }
+
+};
+const getGroupByName = async (name: string) => {
+    try {
+
+        const { data } = await Api.get('/usergroups?group_name=' + name);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao fazer getById de User na Api')
@@ -55,6 +62,7 @@ const getGroupsForUser = async (name: string) => {
 
 const getUserInGroup = async (name: string) => {
     try {
+        console.log(name)
 
         const { data } = await Api.get(`/usergroups/${name}/usersingroup`);
         return data;
@@ -87,6 +95,7 @@ const deleteUserForGroup = async (nameGroup: string, nameUser: string) => {
 };
 
 export const GroupService = {
+    getGroupByName,
     getAllGroup,
     getGroupByID,
     getGroupsForUser,
