@@ -3,7 +3,6 @@ import { Users } from "../../types";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
-import ModalPermissao from '../../components/ModalPermissão';
 
 const User = () => {
   const [users, setUsers] = useState<Users[]>([]);
@@ -12,16 +11,12 @@ const User = () => {
   const [total, setTotal] = useState(0);
   const [usersPerPage] = useState(10);
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState('');  // Termo de pesquisa
-
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Tem certeza que deseja deletar este usuário?")) {
       try {
-        await UserService.deleteUser(id, openModal);
+        await UserService.deleteUser(id);
         setUsers(users.filter((u) => u.id !== id));
       } catch (error) {
         console.error('Erro ao deletar usuário:', error);
@@ -30,21 +25,21 @@ const User = () => {
     }
   };
 
-    const getAllUsers = async (search: string) => {
-      try {
-        const offset = (currentPage - 1) * usersPerPage; // Calcular o offset
-        const result = await UserService.getAllUser(offset, usersPerPage, openModal, search);
-        setUsers(result.results as Users[]);
-        setTotal(result.count);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const getAllUsers = async (search: string) => {
+    try {
+      const offset = (currentPage - 1) * usersPerPage; // Calcular o offset
+      const result = await UserService.getAllUser(offset, usersPerPage, search);
+      setUsers(result.results as Users[]);
+      setTotal(result.count);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    useEffect(() => {
-      getAllUsers('');  // Passa uma string vazia para buscar todos os grupos no início
+  useEffect(() => {
+    getAllUsers('');  // Passa uma string vazia para buscar todos os grupos no início
   }, [currentPage, usersPerPage]);
 
 
@@ -60,22 +55,26 @@ const User = () => {
     <div className="container mx-auto">
       <p className="text-black text-4xl font-bold text-center mb-6">Usuários</p>
       {/* Campo de pesquisa com o botão */}
-      <div className="mb-4 flex items-center">
-                <input
-                    type="text"
-                    placeholder="Pesquisar por nome do grupo"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}  // Atualiza o termo de pesquisa
-                    className="px-4 py-2 border rounded-md w-64"
-                />
-                <button
-                    onClick={handleSearch}  // Chama a função de busca ao clicar no botão
-                    className="ml-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 duration-200"
-                >
-                    Pesquisar
-                </button>
-            </div>
-      <button className="bg-green-600 rounded-md px-5 py-1 shadow-md my-3 text-white hover:bg-green-400 duration-200" onClick={() => navigate(`/user/0/new`)}>Novo Usuário</button>
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <input
+              type="text"
+              placeholder="Pesquisar por nome do grupo"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}  // Atualiza o termo de pesquisa
+              className="px-4 py-2 border rounded-md w-64"
+          />
+          <button
+              onClick={handleSearch}  // Chama a função de busca ao clicar no botão
+              className="ml-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 duration-200"
+          >
+              Pesquisar
+          </button>
+        </div>
+        <button className="ml-2 bg-blue-600 text-white px-8 py-2 rounded-md hover:bg-blue-500 duration-200" onClick={() => navigate(`/user/0/new`)}>Novo Usuário</button>
+                
+      </div>
+      
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
@@ -113,7 +112,6 @@ const User = () => {
           </tbody>
         </table>
         {/* Modal de permissão */}
-      <ModalPermissao show={showModal} onClose={closeModal} />
       </div>
 
       <div className="flex justify-center mt-4">

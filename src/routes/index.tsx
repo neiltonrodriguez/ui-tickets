@@ -14,10 +14,6 @@ export const Rotas = createBrowserRouter([
         path: "/",
         element: <RequireAuth><Dashboard /></RequireAuth>,
         children: [
-            // {
-            //     path: "/",
-            //     element: <RequireAuth><Home /></RequireAuth>,
-            // },
             {
                 path: "/",
                 element: <RequireAuth><Tickets /></RequireAuth>,

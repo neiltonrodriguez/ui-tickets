@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Ldap } from '../types';
 // import { LdapService } from '../services/api/ldap/LdapService';
+import { useNavigate } from 'react-router-dom';
 
 
 type LdapFormProps = {
@@ -43,6 +44,7 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
     });
     const [activeTab, setActiveTab] = useState('ldap');
     const [userFields, setUserFields] = useState<string[]>([]);
+    const navigate = useNavigate()
     // const [systemFields, setSystemFields] = useState<string[]>([]);
 
     useEffect(() => {
@@ -138,6 +140,7 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
 
             {activeTab === 'ldap' && (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                 {!isEditMode && <p>kkk</p>}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Título</label>
                         <input
@@ -201,6 +204,7 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
                                 name="is_active"
                                 checked={ldap.is_active}
                                 onChange={handleChange}
+                                disabled={!isEditMode}
                                 className="form-checkbox h-5 w-5 text-indigo-600"
                             />
                             <span className="ml-2 text-gray-700">Ativo</span>
@@ -219,6 +223,17 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
 
                     </div>
                     <div>
+                        <label className="block text-sm font-medium text-gray-700">DN Base</label>
+                        <input
+                            type="text"
+                            name="dn_base"
+                            value={ldap.dn_base}
+                            onChange={handleChange}
+                            required
+                            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                        />
+                    </div>
+                    <div>
                         <label className="block text-sm font-medium text-gray-700">Usuário</label>
                         <input
                             type="text"
@@ -233,7 +248,7 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Senha</label>
                         <input
-                            type="text"
+                            type="password"
                             name="password"
                             value={ldap.password}
                             onChange={handleChange}
@@ -242,7 +257,14 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
                         />
 
                     </div>
-                    <div className="flex justify-end">
+                    <div className="flex justify-end gap-5">
+                        <button
+                        type="button"
+                        onClick={() => navigate(`/ldap/`)}
+                        className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                        Voltar
+                        </button>
                         <button
                             type="submit"
                             className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

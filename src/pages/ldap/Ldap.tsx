@@ -46,7 +46,7 @@ const Ldaps = () => {
   return (
     <div className="container mx-auto">
       <p className="text-black text-4xl font-bold text-center mb-6">LDAP</p>
-      <button className="bg-green-600 rounded-md px-5 py-1 shadow-md my-3 text-white hover:bg-green-400 duration-200" onClick={() => navigate(`/ldap/0/new`)}>Novo LDAP</button>
+      <button className="bg-blue-600 rounded-md px-5 py-2 shadow-md my-3 text-white hover:bg-green-400 duration-200" onClick={() => navigate(`/ldap/0/new`)}>Novo LDAP</button>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>

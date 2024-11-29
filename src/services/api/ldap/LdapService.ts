@@ -22,7 +22,6 @@ const getAllLdap = async (offset: number = 1, limit: number = 10) => {
 
 const getLdapByID = async (id: string) => {
     try {
-
         const { data } = await Api.get('/ldaps/' + id);
         return data;
     } catch (error: any) {
@@ -33,7 +32,6 @@ const getLdapByID = async (id: string) => {
 
 const getLdapAtributes = async (id: string) => {
     try {
-
         const { data } = await Api.get(`/ldaps/${id}/attributes`);	
         return data;
     } catch (error: any) {
@@ -44,8 +42,9 @@ const getLdapAtributes = async (id: string) => {
 
 const updateLdap = async (ldap: Ldap) => {
     try {
-
-        const { data } = await Api.put(`/ldaps/${ldap.id}`, ldap);
+        const { id, created_by, modified_by, created_time, modified_time, ...ldapToUpdate } = ldap;
+        const { data } = await Api.put(`/ldaps/${ldap.id}/`, ldapToUpdate);
+        alert('Ldap atualizado com sucesso')
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao fazer update de Ldap na Api')
@@ -55,10 +54,12 @@ const updateLdap = async (ldap: Ldap) => {
 
 const createLdap = async (ldap: Ldap) => {
     try {
-
-        const { data } = await Api.post('/ldaps/', ldap);
+        const { id, is_active, scan_schedule, import_groups, include_sub_ous, start_hour, repeate_type, cycle, cache_password, filter_class, filer_user, cn_attribute, dn_attribute, name_attribute, dn_login, open_ldap_atributo_state, open_ldap_atributo_state_du, created_by, modified_by, created_time, modified_time, ...ldapToCreate } = ldap;
+        const { data } = await Api.post('/ldaps/', ldapToCreate);
+        alert('Ldap Criado com sucesso')
         return data;
     } catch (error: any) {
+        alert(error.response?.data?.detail || error.message || 'Erro ao criar ldap')
         return new ApiException(error.message || 'Error ao criar Ldap na Api')
     }
 

@@ -30,3 +30,4 @@ export type Ldap = {
     created_time: Date;
     modified_time: Date;
 }
+

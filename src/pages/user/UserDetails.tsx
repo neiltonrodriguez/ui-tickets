@@ -3,12 +3,14 @@ import { useParams } from 'react-router-dom';
 import { UserService } from '../../services/api/user/UserService';
 import { Users } from '../../types';
 import UserForm from '../../components/UserForm'; // Importando o UserForm
+import { useNavigate } from 'react-router-dom';
 
 const UserDetails = () => {
   const { id, mode } = useParams<{ id: string, mode: string }>();
   const [user, setUser] = useState<Users | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   
 
   useEffect(() => {
@@ -33,11 +35,11 @@ const UserDetails = () => {
 
   
 
-  const handleSave = async (updatedUser: Users) => {
+  const handleSave = async (updateUser: Users) => {
     if (mode === 'new') {
       try {
-        await UserService.createUser(updatedUser);
-        // alert('Usuário criado com sucesso!');
+        await UserService.createUser(updateUser);
+        navigate('/user')
         return;
       } catch (error) {
         console.error('Erro ao criar usuário:', error);
@@ -47,12 +49,13 @@ const UserDetails = () => {
 
     } else if (mode === 'edit') {
       try {
-        await UserService.updateUser(updatedUser);
-        setUser(updatedUser);
+        await UserService.updateUser(updateUser);
+        setUser(updateUser);
+        navigate('/user')
         // alert('Usuário atualizado com sucesso!');
-      } catch (error) {
-        console.error('Erro ao atualizar usuário:', error);
-        alert('Erro ao atualizar usuário.');
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.detail || error.message || 'Erro ao atualizar usuário.';
+        console.log(errorMessage) 
       }
     }
   };
