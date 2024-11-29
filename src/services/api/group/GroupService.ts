@@ -49,10 +49,15 @@ const getGroupOfUser = async (user: string) => {
 
 };
 
-const getGroupsForUser = async (name: string) => {
+const getUsersAvailableForGroups = async (offset: number = 1, limit: number = 5, name: string) => {
     try {
-
-        const { data } = await Api.get(`/usergroups/${name}/availablegroups`);
+        const { data } = await Api.get(`/usergroups/${name}/availableusers`, {
+            params: {
+                offset,
+                limit,
+            }
+        });
+        // console.log('usuarios disponiveis', data)
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao deletar User na Api')
@@ -60,11 +65,14 @@ const getGroupsForUser = async (name: string) => {
 
 };
 
-const getUserInGroup = async (name: string) => {
+const getUserInGroup = async (offset: number = 1, limit: number = 5, name: string) => {
     try {
-        console.log(name)
-
-        const { data } = await Api.get(`/usergroups/${name}/usersingroup`);
+        const { data } = await Api.get(`/usergroups/${name}/usersingroup`, {
+            params: {
+                offset,
+                limit,
+            }
+        });
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao buscar User neste grupo')
@@ -72,10 +80,9 @@ const getUserInGroup = async (name: string) => {
 
 };
 
-const insertUserForGroup = async (name: string, user: UserForGroup) => {
+const insertUserForGroup = async (groupName: string, username: UserForGroup) => {
     try {
-
-        const { data } = await Api.post(`/usergroups/${name}/usertogroup`, user);
+        const { data } = await Api.post(`/usergroups/${groupName}/usertogroup/`, username);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao deletar User na Api')
@@ -83,10 +90,9 @@ const insertUserForGroup = async (name: string, user: UserForGroup) => {
 
 };
 
-const deleteUserForGroup = async (nameGroup: string, nameUser: string) => {
+const deleteUserForGroup = async (groupName: string, username: UserForGroup) => {
     try {
-
-        const { data } = await Api.delete(`/usergroups/${nameGroup}/usertogroup/${nameUser}`);
+        const { data } = await Api.delete(`/usergroups/${groupName}/usertogroup/${username.user_name}/`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao deletar User na Api')
@@ -98,7 +104,7 @@ export const GroupService = {
     getGroupByName,
     getAllGroup,
     getGroupByID,
-    getGroupsForUser,
+    getUsersAvailableForGroups,
     insertUserForGroup,
     deleteUserForGroup,
     getGroupOfUser,

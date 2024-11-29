@@ -15,9 +15,7 @@ const GroupDetails = () => {
     useEffect(() => {
         const getGroupByName = async () => {
             try {
-
                 const result = await GroupService.getGroupByName(name as '');
-                console.log(result);
                 setGroup(result.results[0]);
             } catch (err) {
                 setError('Erro ao carregar os dados do grupo.');
@@ -30,20 +28,6 @@ const GroupDetails = () => {
         getGroupByName();
 
     }, [name]);
-
-
-
-    // const handleSave = async (namegroup: string, user: UserForGroup) => {
-    //     try {
-    //         await GroupService.insertUserForGroup(namegroup, user);
-    //         // alert('Ldap criado com sucesso!');
-    //         return;
-    //     } catch (error) {
-    //         // alert('Erro ao criar ldap.');
-    //         return;
-    //     }
-
-    // };
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
