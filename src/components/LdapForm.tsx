@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Ldap } from '../types';
-// import { LdapService } from '../services/api/ldap/LdapService';
+import { Attributes, Ldap } from '../types';
 import { useNavigate } from 'react-router-dom';
+import { LdapService } from '../services/api/ldap/LdapService';
+import { OUData } from '../interfaces';
 
 
 type LdapFormProps = {
@@ -43,7 +44,8 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
         modified_time: new Date(),
     });
     const [activeTab, setActiveTab] = useState('ldap');
-    const [userFields, setUserFields] = useState<string[]>([]);
+    const [attributes, setAttributes] = useState<Attributes[]>([]);
+    const [ous, setOus] = useState<OUData[]>([]);
     const navigate = useNavigate()
     // const [systemFields, setSystemFields] = useState<string[]>([]);
 
@@ -53,22 +55,15 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
         }
     }, [ldapData]);
 
+
+
     useEffect(() => {
-        const getAtributes = async () => {
-            try {
-                // const result = await LdapService.getLdapAtributes('2');
-                setUserFields(['first_name', 'last_name', 'email', 'phone', 'cell_phone']);
-            } catch (err) {
-
-                console.error(err);
-            } finally {
-
-            }
-        };
-
-        getAtributes();
-
-    }, []);
+        if (activeTab === 'ous') {
+            getOUs();
+        } else if (activeTab === 'atributos') {
+            getAttributes();
+        }
+    }, [activeTab]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -115,6 +110,62 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
         setActiveTab(tab);
     };
 
+    const checkConnection = async () => {
+        try {
+            const result = await LdapService.checkConnectionLdap(ldap)
+            console.log(result)
+        } catch (error) {
+            // alert('Erro ao atualizar ldap.');
+        }
+
+    };
+
+    const updateBaseLdap = async () => {
+        try {
+            const result = await LdapService.updateBaseLdap(ldap.id as number)
+            console.log(result)
+        } catch (error) {
+            // alert('Erro ao atualizar ldap.');
+        }
+
+    };
+
+    const getOUs = async () => {
+        try {
+            const result = await LdapService.getOusByLdap(ldap.id as number)
+            console.log(result)
+            setOus(result.results)
+        } catch (error) {
+            console.log(error)
+        }
+
+    };
+    const getAttributes = async () => {
+        try {
+            const result = await LdapService.getAttributesByLdap(ldap.id as number)
+            console.log(result)
+            setAttributes(result.results)
+        } catch (error) {
+            console.log(error)
+        }
+
+    };
+
+
+    const handleChangeOU = async (e: React.ChangeEvent<HTMLInputElement>, ouId: number) => {
+        try {
+            const ou: OUData = {
+                source: e.target.value,
+            };
+            const result = await LdapService.updateOU(ldap.id as number, ouId, ou)
+            console.log(result)
+            getOUs();
+        } catch (error) {
+            console.log(error)
+        }
+
+    };
+
 
     return (
         <div>
@@ -140,7 +191,6 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
 
             {activeTab === 'ldap' && (
                 <form onSubmit={handleSubmit} className="space-y-4">
-                 {!isEditMode && <p>kkk</p>}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Título</label>
                         <input
@@ -259,12 +309,27 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
                     </div>
                     <div className="flex justify-end gap-5">
                         <button
-                        type="button"
-                        onClick={() => navigate(`/ldap/`)}
-                        className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            type="button"
+                            onClick={() => navigate(`/ldap/`)}
+                            className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
-                        Voltar
+                            Voltar
                         </button>
+                        <button
+                            type="button"
+                            onClick={updateBaseLdap}
+                            className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-700 hover:bg-orange-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                            Atualizar Base LDAP
+                        </button>
+                        <button
+                            type="button"
+                            onClick={checkConnection}
+                            className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                            Testar Conexão
+                        </button>
+
                         <button
                             type="submit"
                             className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -276,44 +341,39 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
             )}
             {activeTab === 'atributos' && (
                 <form onSubmit={handleSubmitAtributes}>
-                    {userFields.map((field, index) => (
-                        <div className="grid gap-3 mb-3 md:grid-cols-2">
+                    {attributes.map((field, index) => (
+                        <div className="grid gap-3 mb-3 md:grid-cols-2" key={index}>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Título</label>
-                                <select
+                                <input
                                     name="title"
-                                    // value={ldap.title}
-                                    onChange={handleChange}
+                                    value={field.ldap_field}
+                                    // onChange={handleChange}
                                     required
                                     className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                                >
-                                    <option value="1" key={index}>{field}</option>
-
-                                </select>
+                                />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Servidor</label>
-                                <select
+                                <input
                                     name="title"
-                                    // value={ldap.title}
-                                    onChange={handleChange}
+                                    value={field.system_field}
+                                    // onChange={handleChange}
                                     required
                                     className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                                >
-                                    <option value="1" key={index}>{field}</option>
-                                </select>
+                                />
                             </div>
                         </div>
                     ))}
 
 
                     <div className="flex justify-end">
-                        <button
+                        {/* <button
                             type="submit"
                             className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
                             Salvar
-                        </button>
+                        </button> */}
                     </div>
                 </form>
             )}
@@ -323,27 +383,27 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
                     <div className="grid gap-3 mb-3 md:grid-cols-2">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Source</label>
-                            <input
-                                type="text"
-                                name="title"
-                                // value={ldap.title}
-                                onChange={handleChange}
-                                required
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                            />
+
+                            {ous.map((ou, index) => (
+                                <div key={index}>
+                                    <input
+                                        type="text"
+                                        name={`source-${ou.id}`} // Um nome único para cada input
+                                        value={ou.source} // Valor do source do objeto
+                                        onChange={(e) => handleChangeOU(e, ou.id as number)} // Atualiza com o id correspondente
+                                        required
+                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    />
+
+                                </div>
+                            ))}
+
                         </div>
-                        
+
                     </div>
 
-
-
                     <div className="flex justify-end">
-                        <button
-                            type="submit"
-                            className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                            Salvar
-                        </button>
+
                     </div>
                 </form>
             )}

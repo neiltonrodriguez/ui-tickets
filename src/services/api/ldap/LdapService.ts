@@ -1,3 +1,4 @@
+import { OUData } from "../../../interfaces";
 import { Ldap } from "../../../types";
 import { Api } from "../Api";
 import { ApiException } from "../ApiExceptions";
@@ -8,10 +9,10 @@ const getAllLdap = async (offset: number = 1, limit: number = 10) => {
         const { data } = await Api.get('/ldaps/',
             {
                 params: {
-                  offset,
-                  limit  
+                    offset,
+                    limit
                 }
-              }
+            }
         );
         return data;
     } catch (error: any) {
@@ -32,7 +33,7 @@ const getLdapByID = async (id: string) => {
 
 const getLdapAtributes = async (id: string) => {
     try {
-        const { data } = await Api.get(`/ldaps/${id}/attributes`);	
+        const { data } = await Api.get(`/ldaps/${id}/attributes`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao fazer get atributes')
@@ -67,7 +68,6 @@ const createLdap = async (ldap: Ldap) => {
 
 const deleteLdap = async (id: number) => {
     try {
-
         const { data } = await Api.delete(`/ldaps/${id}`);
         return data;
     } catch (error: any) {
@@ -76,12 +76,74 @@ const deleteLdap = async (id: number) => {
 
 };
 
+const checkConnectionLdap = async (ldap: Ldap) => {
+    try {
+        const { id, is_active, scan_schedule, import_groups, include_sub_ous, start_hour, repeate_type, cycle, cache_password, filter_class, filer_user, cn_attribute, dn_attribute, name_attribute, dn_login, open_ldap_atributo_state, open_ldap_atributo_state_du, created_by, modified_by, created_time, modified_time, ...ldapToCreate } = ldap;
+        const { data } = await Api.post('/ldaps/teste/checkconnection/', ldapToCreate);
+        alert('Conexão bem sucedida!')
+        return data;
+    } catch (error: any) {
+        alert(error.response?.data?.detail || error.message || 'Conexão com erro')
+        return new ApiException(error.message || 'Error ao criar Ldap na Api')
+    }
+
+};
+
+const updateBaseLdap = async (ldapID: number) => {
+    try {
+        const { data } = await Api.post(`/ldaps/${ldapID}/updateldapusers/`);
+        alert('Base atualizada com sucesso')
+        return data;
+    } catch (error: any) {
+        alert(error.response?.data?.detail || error.message || 'Erro ao atualizar a base')
+        return new ApiException(error.message || 'Erro ao atualizar a base')
+    }
+
+};
+
+const getOusByLdap = async (ldapID: number) => {
+    try {
+        const { data } = await Api.get(`/ldaps/${ldapID}/ous/`);
+        return data;
+    } catch (error: any) {
+        alert(error.response?.data?.detail || error.message || 'Erro ao buscar OUs')
+        return new ApiException(error.message || 'Erro ao buscar OUs')
+    }
+
+};
+
+const updateOU = async (ldapID: number, ouId: number, ou: OUData) => {
+    try {
+        const { data } = await Api.put(`/ldaps/${ldapID}/ous/${ouId}/`, ou);
+        return data;
+    } catch (error: any) {
+        alert(error.response?.data?.detail || error.message || 'Erro ao buscar OUs')
+        return new ApiException(error.message || 'Erro ao buscar OUs')
+    }
+
+};
+
+const getAttributesByLdap = async (ldapID: number) => {
+    try {
+        const { data } = await Api.get(`/ldaps/${ldapID}/attributes/`);
+        return data;
+    } catch (error: any) {
+        alert(error.response?.data?.detail || error.message || 'Erro ao buscar Atributos')
+        return new ApiException(error.message || 'Erro ao buscar Atributos')
+    }
+
+};
 
 export const LdapService = {
+    updateOU,
+    getOusByLdap,
+    getAttributesByLdap,
+    updateBaseLdap,
     getAllLdap,
     getLdapByID,
     updateLdap,
     createLdap,
     deleteLdap,
-    getLdapAtributes
+    getLdapAtributes,
+    checkConnectionLdap
 }
