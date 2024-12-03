@@ -32,10 +32,10 @@ const Tickets = () => {
   }, [isAttendant]);
 
   useEffect(() => {
-    const getUserData = async () => {
+    const getTickets = async () => {
       try {
         const result = await TicketService.getAllTickets();
-        setTicket(result as Ticket[]);
+        setTicket(result.results as Ticket[]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -43,7 +43,7 @@ const Tickets = () => {
       }
     };
 
-    getUserData();
+    getTickets();
   }, []);
 
   const handleTabChange = (tab: string) => {
@@ -86,13 +86,13 @@ const Tickets = () => {
             <tbody>
               {ticket.map((t: Ticket) => (
                 <tr key={t.id} className="border-t">
-                  <td className="text-left py-3 px-4">{t.code}</td>
-                  <td className="text-left py-3 px-4">{t.titulo}</td>
-                  <td className="text-left py-3 px-4">{t.categoria}</td>
+                  <td className="text-left py-3 px-4">{t.id}</td>
+                  <td className="text-left py-3 px-4">{t.title}</td>
+                  <td className="text-left py-3 px-4">{t.problem_type}</td>
                   <td className="text-left py-3 px-4">{t.status ? 'ativo' : 'inativo'}</td>
-                  <td className="text-left py-3 px-4">{t.prioridade}</td>
-                  <td className="text-left py-3 px-4">{t.data_para_conclusao}</td>
-                  <td className="text-left py-3 px-4">{t.atendente}</td>
+                  <td className="text-left py-3 px-4">{t.priority}</td>
+                  <td className="text-left py-3 px-4">{t.insert_time}</td>
+                  <td className="text-left py-3 px-4">{t.submit_user}</td>
                 </tr>
               ))}
             </tbody>
@@ -117,13 +117,13 @@ const Tickets = () => {
             <tbody>
               {ticket.map((t: Ticket) => (
                 <tr key={t.id} className="border-t">
-                  <td className="text-left py-3 px-4">{t.code}</td>
-                  <td className="text-left py-3 px-4">{t.titulo}</td>
-                  <td className="text-left py-3 px-4">{t.categoria}</td>
+                  <td className="text-left py-3 px-4">{t.id}</td>
+                  <td className="text-left py-3 px-4">{t.title}</td>
+                  <td className="text-left py-3 px-4">{t.problem_type}</td>
                   <td className="text-left py-3 px-4">{t.status ? 'ativo' : 'inativo'}</td>
-                  <td className="text-left py-3 px-4">{t.prioridade}</td>
-                  <td className="text-left py-3 px-4">{t.data_para_conclusao}</td>
-                  <td className="text-left py-3 px-4">{t.atendente}</td>
+                  <td className="text-left py-3 px-4">{t.priority}</td>
+                  <td className="text-left py-3 px-4">{t.insert_time}</td>
+                  <td className="text-left py-3 px-4">{t.submit_user}</td>
                 </tr>
               ))}
             </tbody>
