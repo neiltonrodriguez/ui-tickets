@@ -1,3 +1,3 @@
 export type UserForGroup = {
-    user_name: string;
+    user_name: number;
 }

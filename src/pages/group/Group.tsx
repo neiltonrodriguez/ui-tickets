@@ -73,8 +73,8 @@ const Group = () => {
                     </thead>
                     <tbody>
                         {groups.map((group: Groups) => (
-                            <tr key={group.id} className="border-t hover:bg-gray-50 cursor-pointer">
-                                <td onClick={() => navigate(`/group/${group.group_name}`)} className="text-left py-3 px-4">{group.group_name}</td>
+                            <tr key={group.ref_id} className="border-t hover:bg-gray-50 cursor-pointer">
+                                <td onClick={() => navigate(`/group/${group.ref_id}`)} className="text-left py-3 px-4">{group.group_name}</td>
                             </tr>
                         ))}
                     </tbody>

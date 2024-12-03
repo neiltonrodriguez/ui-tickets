@@ -8,7 +8,7 @@ type GroupFormProps = {
 
 const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
   const [group, setGroup] = useState<Groups>({
-    id: 0,
+    ref_id: '',
     group_name: '',
   });
   const [userInGroup, setUserInGroup] = useState<UserInGroup[]>([]);
@@ -34,7 +34,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
   const getMembros = async () => {
     try {
       const offset = (currentPage1 - 1) * usersPerPage1; // Calcular o offset
-      const result = await GroupService.getUserInGroup(offset, usersPerPage1, group.group_name);
+      const result = await GroupService.getUserInGroup(offset, usersPerPage1, group.ref_id as '');
       setUserInGroup(result.results);
       setTotal1(result.count);
 
@@ -59,7 +59,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
   const getUsersAvailable = async () => {
     try {
       const offset = (currentPage - 1) * usersPerPage; // Calcular o offset
-      const result = await GroupService.getUsersAvailableForGroups(offset, usersPerPage, group.group_name);
+      const result = await GroupService.getUsersAvailableForGroups(offset, usersPerPage, group.ref_id);
       setUsersAvailable(result.results);
       setTotal(result.count);
 
@@ -86,12 +86,12 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
     setActiveTab(tab);
   };
 
-  const addUserInGroup = async (username: string) => {
+  const addUserInGroup = async (id: number) => {
     try {
       const user: UserForGroup = {
-        user_name: username,
+        user_name: id,
       };
-      await GroupService.insertUserForGroup(group.group_name, user);
+      await GroupService.insertUserForGroup(group.ref_id, user);
       getMembros();
       getUsersAvailable();
     } catch (err) {
@@ -99,12 +99,12 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
     }
   };
 
-  const removeUserInGroup = async (username: string) => {
+  const removeUserInGroup = async (id: number) => {
     try {
       const user: UserForGroup = {
-        user_name: username,
+        user_name: id,
       };
-      await GroupService.deleteUserForGroup(group.group_name, user);
+      await GroupService.deleteUserForGroup(group.ref_id, user);
       getMembros();
       getUsersAvailable();
     } catch (err) {
@@ -190,7 +190,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
                       <div className="flex items-center justify-between">
                         <span>{member.username}</span>
                         <button
-                          onClick={() => addUserInGroup(member.username)}
+                          onClick={() => addUserInGroup(member.id)}
                           className="bg-green-600 hover:bg-green-400 duration-200 px-2 rounded-md text-white text-lg font-bold">+</button>
                       </div>
                     </td>
@@ -242,7 +242,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
                       <div className="flex items-center justify-between">
                         <span>{member.username}</span>
                         <button
-                          onClick={() => removeUserInGroup(member.username)}
+                          onClick={() => removeUserInGroup(member.id)}
                           className="bg-red-600 hover:bg-red-400 duration-200 px-3 rounded-md text-white text-lg font-bold">-</button>
                       </div>
                     </td>

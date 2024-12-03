@@ -49,9 +49,9 @@ const getGroupOfUser = async (user: string) => {
 
 };
 
-const getUsersAvailableForGroups = async (offset: number = 1, limit: number = 5, name: string) => {
+const getUsersAvailableForGroups = async (offset: number = 1, limit: number = 5, id: string) => {
     try {
-        const { data } = await Api.get(`/usergroups/${name}/availableusers`, {
+        const { data } = await Api.get(`/usergroups/${id}/availableusers`, {
             params: {
                 offset,
                 limit,

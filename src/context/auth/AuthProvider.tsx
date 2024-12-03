@@ -24,19 +24,27 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
     }, []);
 
     const signin = async (username: string, password: string) => {
-        const data = await LoginService.login(username, password)
-        if (data instanceof ApiException) {// Trate o erro de forma apropriada
-            return false;
-        }
-        if (data.user.length > 0 && data.access) {
-            setUser(data.user[0]);
-            setTokenStorage(data.access);
-            setUserStorage(data.user[0]);
-            return true;
-        }
-        return false;
+        try {
+            const data = await LoginService.login(username, password);
 
-    }
+            if (data instanceof ApiException) {
+                return { success: false, message: data.message };
+            }
+
+            if (data.user?.length > 0 && data.access) {
+                setUser(data.user[0]);
+                setTokenStorage(data.access);
+                setUserStorage(data.user[0]);
+                return { success: true, data }; // Retorna sucesso
+            }
+    
+            return { success: false, message: "Erro desconhecido." };
+        } catch (error: any) {
+            // Caso não seja uma ApiException, retornamos uma mensagem genérica
+            return { success: false, message: "Erro ao tentar realizar o login." };
+        }
+    };
+    
 
 
     const setTokenStorage = (token: string) => {
