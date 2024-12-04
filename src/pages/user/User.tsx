@@ -10,8 +10,8 @@ const User = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [usersPerPage] = useState(10);
+  const [search, setSearch] = useState(''); 
   const navigate = useNavigate();
-  const [search, setSearch] = useState('');  // Termo de pesquisa
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Tem certeza que deseja deletar este usuário?")) {

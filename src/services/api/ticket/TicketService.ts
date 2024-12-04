@@ -1,30 +1,56 @@
 import { Api } from "../Api";
 import { ApiException } from "../ApiExceptions";
 
-const getAllTickets = async () => {
+const getAllTickets = async (offset: number = 1, limit: number = 10, search: string = '') => {
     try {
-        // const data: Ticket[] = [
-        //             {
-        //                 "id": 1,
-        //                 "code": 223,
-        //                 "status": true,
-        //                 "hora_solicitacao": "2019-07-01T14:00:00",
-        //                 "aberto_por": "João da Silva",
-        //                 "categoria": "Manutenção",
-        //                 "sub_categoria": "Elétrica",
-        //                 "titulo": "Lâmpada queimada",
-        //                 "usuario_solicitante": "Maria da Silva",
-        //                 "administrador_do_grupo": "José da Silva",
-        //                 "atendente": "José da Silva",
-        //                 "prioridade": "Alta",
-        //                 "data_para_conclusao": "2019-07-01T14:00:00",
-        //                 "tempo_de_atendimento": "00:00:00"
-        //             }
-        //         ];
+        const { data } = await Api.get('/services/',{
+            params: {
+                offset,
+                limit,
+                search
+              },
+            }
+        );
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
 
-        // Simular um atraso na resposta para imitar uma API real
-        // await new Promise(resolve => setTimeout(resolve, 500)); // 500ms de atraso
-        const { data } = await Api.get('/services/');
+};
+
+const getTicketByID = async (id: string) => {
+    try {
+        const { data } = await Api.get(`/services/${id}`);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
+const getFilesByTicketID = async (id: number) => {
+    try {
+        const { data } = await Api.get(`/services/${id}/files`);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
+const getLogsByTicketID = async (id: number) => {
+    try {
+        const { data } = await Api.get(`/services/${id}/logs`);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
+const getHistoryByTicketID = async (id: number) => {
+    try {
+        const { data } = await Api.get(`/services/${id}/history`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')
@@ -34,5 +60,9 @@ const getAllTickets = async () => {
 
 
 export const TicketService = {
+    getHistoryByTicketID,
+    getFilesByTicketID,
+    getLogsByTicketID,
     getAllTickets,
+    getTicketByID
 }
