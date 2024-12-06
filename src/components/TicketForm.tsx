@@ -10,19 +10,19 @@ type TicketFormProps = {
 const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [ticketFiles, setTicketFiles] = useState<TicketFile[]>([]);
-    const [historys, setHistorys] = useState<Ticket[]>([]);
+    // const [historys, setHistorys] = useState<Ticket[]>([]);
     const [logs, setLogs] = useState<Log[]>([]);
-    const [isAttendant, setIsAttendant] = useState(true)
+    // const [isAttendant, setIsAttendant] = useState(true)
     const [activeTab, setActiveTab] = useState('detalhes');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const userData = localStorage.getItem('user');
-        if (userData) {
-          const user = JSON.parse(userData);
-          setIsAttendant(user && user.attendant);
-        }
-      }, []);
+    // useEffect(() => {
+    //     const userData = localStorage.getItem('user');
+    //     if (userData) {
+    //         const user = JSON.parse(userData);
+    //         setIsAttendant(user && user.attendant);
+    //     }
+    // }, []);
 
     const getFiles = async () => {
         try {
@@ -46,16 +46,16 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
         }
     };
 
-    const getHistorys = async () => {
-        try {
-            if (ticket?.id) {
-                const result = await TicketService.getHistoryByTicketID(ticket.id);
-                setHistorys(result.results);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    };
+    // const getHistorys = async () => {
+    //     try {
+    //         if (ticket?.id) {
+    //             const result = await TicketService.getHistoryByTicketID(ticket.id);
+    //             setHistorys(result.results);
+    //         }
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    // };
 
 
     useEffect(() => {
@@ -72,9 +72,9 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
             getLogs();
         }
 
-        if (activeTab === 'historico') {
-            getHistorys();
-        }
+        // if (activeTab === 'historico') {
+        //     getHistorys();
+        // }
     }, [activeTab]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -571,8 +571,8 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                     <tbody>
                         {ticketFiles.map((t: TicketFile) => (
                             <tr key={t.download_link} className="border-t hover:bg-gray-50 cursor-pointer">
-                                <td className="text-left px-2 text-sm">{t.real_file_name}</td>
-                                <td className="text-left px-2 text-sm"><a href={t.download_link} download target="_blank">{t.download_link}</a></td>
+                                <td className="text-left px-2 text-sm"><a href={t.download_link} download>{t.real_file_name}</a></td>
+                                <td className="text-left px-2 text-sm"><a href={t.download_link} download>{t.download_link}</a></td>
 
                             </tr>
                         ))}

@@ -8,18 +8,26 @@ import { useNavigate } from 'react-router-dom';
 const Tickets = () => {
   // const [filteredData, setFilteredData] = useState([]);
   const [activeTab, setActiveTab] = useState('solicitados');
-  const [isAttendant, setAttendant] = useState(true);
+  const [isAttendant, setAttendant] = useState<boolean | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage1, setCurrentPage1] = useState(1);
   const [total, setTotal] = useState(0);
+  const [total1, setTotal1] = useState(0);
   const [ticketsPerPage] = useState(10);
-  const [search, setSearch] = useState('');
+  const [ticketsPerPage1] = useState(10);
+  // const [search, setSearch] = useState('');
   const [pageRange, setPageRange] = useState([1, 5]);
+  const [pageRange1, setPageRange1] = useState([1, 5]);
   const navigate = useNavigate();
+  const [ticket, setTicket] = useState<Ticket[]>([]);
+  const [myTicket, setMyTicket] = useState<Ticket[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
       const user = JSON.parse(userData);
+      console.log(user)
       setAttendant(user && user.attendant);
     }
   }, []);
@@ -28,23 +36,21 @@ const Tickets = () => {
   //     console.log(filters);  // Aqui você pode aplicar os filtros aos seus dados
   //     // setFilteredData(filters);
   // };
-  const [ticket, setTicket] = useState<Ticket[]>([]);
-  const [myTicket, setMyTicket] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!isAttendant) {
-      setActiveTab('solicitados')
-    } else {
-      setActiveTab('atendidos')
-    }
-  }, [isAttendant]);
 
 
-  const getTickets = async () => {
+  // useEffect(() => {
+  //   if (!isAttendant) {
+  //     setActiveTab('solicitados')
+  //   } else {
+  //     setActiveTab('atendidos')
+  //   }
+  // }, [isAttendant]);
+
+
+  const getTicketsServed = async () => {
     try {
-      const offset = (currentPage - 1) * ticketsPerPage; 
-      const result = await TicketService.getAllTickets(offset, ticketsPerPage, search);
+      const offset = (currentPage - 1) * ticketsPerPage;
+      const result = await TicketService.getAllTicketsServed(offset, ticketsPerPage, '');
       setTicket(result.results as Ticket[]);
       setTotal(result.count);
       const totalPages = Math.ceil(result.count / ticketsPerPage);
@@ -53,12 +59,7 @@ const Tickets = () => {
       const newRangeEnd = Math.min(newRangeStart + 4, totalPages);
       setPageRange([newRangeStart, newRangeEnd]);
 
-      const userData = localStorage.getItem('user');
-      if (userData) {
-        const user = JSON.parse(userData);
-        const myTickets = result.results.filter((t: Ticket) => t.request_user === user.username);
-        setMyTicket(myTickets); 
-      }
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -66,9 +67,35 @@ const Tickets = () => {
     }
   };
 
-  useEffect(() => {
-    getTickets();
-  }, [currentPage, ticketsPerPage]);
+  const getTicketsRequest = async () => {
+    try {
+      const offset = (currentPage1 - 1) * ticketsPerPage1;
+      const result = await TicketService.getAllTicketsRequest(offset, ticketsPerPage1, '');
+      setMyTicket(result.results as Ticket[]);
+      setTotal1(result.count);
+      const totalPages = Math.ceil(result.count / ticketsPerPage1);
+
+      const newRangeStart = Math.floor((currentPage1 - 1) / 5) * 5 + 1;
+      const newRangeEnd = Math.min(newRangeStart + 4, totalPages);
+      setPageRange1([newRangeStart, newRangeEnd]);
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {      
+    console.log(isAttendant)
+    if (isAttendant) {
+      setActiveTab('atendidos')
+      getTicketsServed();
+      getTicketsRequest();
+    } else {
+      getTicketsRequest();
+    }
+  }, [isAttendant, currentPage, currentPage1]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -82,7 +109,15 @@ const Tickets = () => {
 
     setPageRange([newRangeStart, newRangeEnd]);
   };
-  const totalPages = Math.ceil(total / ticketsPerPage);
+
+  const updatePageRange1 = (newPage: number) => {
+    setCurrentPage1(newPage);
+
+    const newRangeStart = Math.floor((newPage - 1) / 5) * 5 + 1;
+    const newRangeEnd = Math.min(newRangeStart + 4, Math.ceil(total1 / ticketsPerPage1));
+
+    setPageRange1([newRangeStart, newRangeEnd]);
+  };
 
   if (loading) return <p>Loading...</p>;
 
@@ -125,48 +160,48 @@ const Tickets = () => {
             <tbody>
               {ticket.map((t: Ticket) => (
                 <tr key={t.id} className="border-t hover:bg-gray-50 cursor-pointer">
-                  <td onClick={() => navigate(`/ticket/${t.id}/`)} className="text-left px-2 text-sm">{t.id}</td>
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/`)}  className="text-left px-2 text-sm">{t.request_user}</td>)}
-                  <td className="text-left px-2 text-sm">{t.title.substring(0, 10)}..</td>
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/`)}  className="text-left px-2 text-sm">{t.problem_type}</td>)}
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/`)}  className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/`)}  className="text-left px-2 text-sm">{t.third_level_category}</td>)}
-                  <td onClick={() => navigate(`/ticket/${t.id}/`)}  className="text-left px-2 text-sm">{t.responsibility}</td>
-                  <td onClick={() => navigate(`/ticket/${t.id}/`)}  className="text-left px-2 text-sm">{t.status ? 'ativo' : 'inativo'}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.id}</td>
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.request_user}</td>)}
+                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.title.substring(0, 10)}..</td>
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.problem_type}</td>)}
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.third_level_category}</td>)}
+                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.responsibility}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.status ? 'ativo' : 'inativo'}</td>
 
-                  <td onClick={() => navigate(`/ticket/${t.id}/`)}  className="text-left px-2 text-sm">{t.insert_time}</td>
-                  <td onClick={() => navigate(`/ticket/${t.id}/`)}  className="text-left px-2 text-sm">{t.close_time}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.insert_time}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.close_time}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           <div className="flex justify-center mt-4">
-              <button
-                onClick={() => updatePageRange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="mx-1 px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
-              >
-                Anterior
-              </button>
+            <button
+              onClick={() => updatePageRange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="mx-1 px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+            >
+              Anterior
+            </button>
 
-              {Array.from({ length: pageRange[1] - pageRange[0] + 1 }, (_, index) => (
-                <button
-                  key={pageRange[0] + index}
-                  onClick={() => updatePageRange(pageRange[0] + index)}
-                  className={`mx-1 px-3 py-1 rounded ${currentPage === pageRange[0] + index ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                >
-                  {pageRange[0] + index}
-                </button>
-              ))}
-
+            {Array.from({ length: pageRange[1] - pageRange[0] + 1 }, (_, index) => (
               <button
-                onClick={() => updatePageRange(currentPage + 1)}
-                disabled={currentPage === Math.ceil(total / ticketsPerPage)}
-                className="mx-1 px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+                key={pageRange[0] + index}
+                onClick={() => updatePageRange(pageRange[0] + index)}
+                className={`mx-1 px-3 py-1 rounded ${currentPage === pageRange[0] + index ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
               >
-                Próximo
+                {pageRange[0] + index}
               </button>
-            </div>
+            ))}
+
+            <button
+              onClick={() => updatePageRange(currentPage + 1)}
+              disabled={currentPage === Math.ceil(total / ticketsPerPage)}
+              className="mx-1 px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+            >
+              Próximo
+            </button>
+          </div>
 
         </div>
       )}
@@ -191,20 +226,47 @@ const Tickets = () => {
               {myTicket.map((t: Ticket) => (
                 <tr key={t.id} className="border-t">
                   <td onClick={() => navigate(`/ticket/${t.id}/`)} className="text-left px-2 text-sm">{t.id}</td>
-                  {isAttendant && (<td className="text-left px-2 text-sm">{t.request_user}</td>)}
-                  <td className="text-left px-2 text-sm">{t.title.substring(0, 10)}..</td>
-                  {isAttendant && (<td className="text-left px-2 text-sm">{t.problem_type}</td>)}
-                  {isAttendant && (<td className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
-                  {isAttendant && (<td className="text-left px-2 text-sm">{t.third_level_category}</td>)}
-                  <td className="text-left px-2 text-sm">{t.responsibility}</td>
-                  <td className="text-left px-2 text-sm">{t.status ? 'ativo' : 'inativo'}</td>
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.request_user}</td>)}
+                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.title.substring(0, 10)}..</td>
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.problem_type}</td>)}
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.third_level_category}</td>)}
+                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.responsibility}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.status ? 'ativo' : 'inativo'}</td>
 
-                  <td className="text-left px-2 text-sm">{t.insert_time}</td>
-                  <td className="text-left px-2 text-sm">{t.close_time}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.insert_time}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.close_time}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={() => updatePageRange1(currentPage1 - 1)}
+              disabled={currentPage1 === 1}
+              className="mx-1 px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+            >
+              Anterior
+            </button>
+
+            {Array.from({ length: pageRange1[1] - pageRange1[0] + 1 }, (_, index) => (
+              <button
+                key={pageRange1[0] + index}
+                onClick={() => updatePageRange1(pageRange[0] + index)}
+                className={`mx-1 px-3 py-1 rounded ${currentPage1 === pageRange1[0] + index ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              >
+                {pageRange1[0] + index}
+              </button>
+            ))}
+
+            <button
+              onClick={() => updatePageRange1(currentPage1 + 1)}
+              disabled={currentPage1 === Math.ceil(total1 / ticketsPerPage1)}
+              className="mx-1 px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+            >
+              Próximo
+            </button>
+          </div>
 
         </div>
       )}

@@ -1,9 +1,9 @@
 import { Api } from "../Api";
 import { ApiException } from "../ApiExceptions";
 
-const getAllTickets = async (offset: number = 1, limit: number = 10, search: string = '') => {
+const getAllTicketsServed = async (offset: number = 1, limit: number = 10, search: string = '') => {
     try {
-        const { data } = await Api.get('/services/',{
+        const { data } = await Api.get('/services/list/served',{
             params: {
                 offset,
                 limit,
@@ -18,9 +18,36 @@ const getAllTickets = async (offset: number = 1, limit: number = 10, search: str
 
 };
 
-const getTicketByID = async (id: string) => {
+const getAllTicketsRequest = async (offset: number = 1, limit: number = 10, search: string = '') => {
     try {
-        const { data } = await Api.get(`/services/${id}`);
+        const { data } = await Api.get('/services/list/myrequests/',{
+            params: {
+                offset,
+                limit,
+                search
+              },
+            }
+        );
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
+const getTicketByIDServed = async (id: string) => {
+    try {
+        const { data } = await Api.get(`/services/item/served/${id}/`);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
+const getTicketByIDRequest = async (id: string) => {
+    try {
+        const { data } = await Api.get(`/services/item/myrequest/${id}/`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')
@@ -63,6 +90,8 @@ export const TicketService = {
     getHistoryByTicketID,
     getFilesByTicketID,
     getLogsByTicketID,
-    getAllTickets,
-    getTicketByID
+    getAllTicketsServed,
+    getAllTicketsRequest,
+    getTicketByIDServed,
+    getTicketByIDRequest
 }

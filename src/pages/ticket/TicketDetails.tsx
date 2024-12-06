@@ -3,47 +3,62 @@ import { useParams } from 'react-router-dom';
 import { TicketService } from '../../services/api/ticket/TicketService';
 import { Ticket } from '../../types';
 import TicketForm from '../../components/TicketForm'; // Importando o UserForm
-import { useNavigate } from 'react-router-dom';
 
 const UserDetails = () => {
-  const { id } = useParams<{ id: string }>();
-  const [ticket, setTicket] = useState<Ticket | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-  
+    const { id, tipo } = useParams<{ id: string, tipo: string }>();
+    const [ticket, setTicket] = useState<Ticket | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const getById = async () => {
-      try {
-        const result = await TicketService.getTicketByID(id as '');
-        setTicket(result);
-      } catch (err) {
-        setError('Erro ao carregar os dados do usuário.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+
+
+    const getByIdServed = async () => {
+        try {
+            const result = await TicketService.getTicketByIDServed(id as '');
+            setTicket(result);
+        } catch (err) {
+            setError('Erro ao carregar os dados do usuário.');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    getById();
+    const getByIdRequest = async () => {
+        try {
+            const result = await TicketService.getTicketByIDRequest(id as '');
+            setTicket(result);
+        } catch (err) {
+            setError('Erro ao carregar os dados do usuário.');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  }, [id]);
+    useEffect(() => {
+        if(tipo == 'served'){
+            getByIdServed();
+        } else {
+            getByIdRequest();
+        }
+
+    }, [id]);
 
 
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
 
-  return (
+    return (
 
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Detalhes do chamado</h1>
-      {ticket && (
-        <TicketForm ticketData={ticket}/>
-      )}
-    </div>
-  );
+        <div className="container mx-auto p-6">
+            <h1 className="text-2xl font-bold mb-4">Detalhes do chamado</h1>
+            {ticket && (
+                <TicketForm ticketData={ticket} />
+            )}
+        </div>
+    );
 };
 
 export default UserDetails;
