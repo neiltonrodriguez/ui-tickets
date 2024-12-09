@@ -390,35 +390,35 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                         <div className="grid grid-cols-3 gap-4 mt-3 p-3">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Notas</label>
-                                <input
-                                    type="text"
-                                    name="title"
+                                <textarea
+                                    name="notes"
                                     value={ticket?.notes}
-                                    onChange={handleChange}
+
                                     required
                                     className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    rows={3}
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Causa raiz</label>
-                                <input
-                                    type="text"
-                                    name="title"
+                                <textarea
+                                    name="resolution"
                                     value={ticket?.resolution}
-                                    onChange={handleChange}
+
                                     required
                                     className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    rows={3}
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Solução</label>
-                                <input
-                                    type="text"
-                                    name="title"
+                                <textarea
+                                    name="solution"
                                     value={ticket?.solution}
-                                    onChange={handleChange}
+
                                     required
                                     className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    rows={3}
                                 />
                             </div>
                         </div>

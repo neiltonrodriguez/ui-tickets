@@ -92,7 +92,7 @@ const User = () => {
           <tbody>
             {users.map((user: Users) => (
               <tr key={user.id} className="border-t hover:bg-gray-50 cursor-pointer">
-                <td onClick={() => navigate(`/user/${user.id}/edit/`)} className="text-left py-3 px-4">{user.first_name}</td>
+                <td onClick={() => navigate(`/user/${user.id}/edit/`)} className="text-left py-3 px-4">{user.complete_user_name}</td>
                 <td onClick={() => navigate(`/user/${user.id}/edit`)} className="text-left py-3 px-4">{user.username}</td>
                 <td onClick={() => navigate(`/user/${user.id}/edit`)} className="text-left py-3 px-4">{user.email}</td>
                 <td onClick={() => navigate(`/user/${user.id}/edit`)} className="text-left py-3 px-4">{user.cell_phone}</td>

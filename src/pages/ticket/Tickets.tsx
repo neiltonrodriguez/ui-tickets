@@ -167,7 +167,7 @@ const Tickets = () => {
                   {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
                   {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.third_level_category}</td>)}
                   <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.responsibility}</td>
-                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.status ? 'ativo' : 'inativo'}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.status}</td>
 
                   <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.insert_time}</td>
                   <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.close_time}</td>
@@ -232,7 +232,7 @@ const Tickets = () => {
                   {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
                   {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.third_level_category}</td>)}
                   <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.responsibility}</td>
-                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.status ? 'ativo' : 'inativo'}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.status}</td>
 
                   <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.insert_time}</td>
                   <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.close_time}</td>
