@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { FilterState } from '../types';
 import { TicketService } from '../services/api/ticket/TicketService';
 import debounce from 'lodash/debounce';
