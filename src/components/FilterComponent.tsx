@@ -1,146 +1,333 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FilterState } from '../types';
+import { TicketService } from '../services/api/ticket/TicketService';
+import debounce from 'lodash/debounce';
 
 type FilterProps = {
-    onFilter: (filters: FilterState) => void; // Função de callback para passar os filtros
+    onFilter: (filters: FilterState) => void;
 };
 
-type FilterState = {
-    startDate: string;
-    endDate: string;
-    usuarioSolicitante: string;
-    atendente: string;
-    status: string;
-    categoria: string;
-    subCategoria: string;
-    numeroChamado: string;
+type FilterOption = {
+    [key: string]: string;
 };
 
 const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
     const [filters, setFilters] = useState<FilterState>({
-        startDate: '',
-        endDate: '',
-        usuarioSolicitante: '',
-        atendente: '',
-        status: '',
-        categoria: '',
-        subCategoria: '',
-        numeroChamado: '',
+        request_user: '',
+        responsability: '',
+        problem_type: '',
+        problem_sub_type: '',
     });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const [subCategoryOptions, setSubCategoryOptions] = useState<FilterOption[]>([]);
+    const [filteredSubCategory, setFilteredSubCategory] = useState<FilterOption[]>([]);
+    const [categoryOptions, setCategoryOptions] = useState<FilterOption[]>([]);
+    const [filteredCategory, setFilteredCategory] = useState<FilterOption[]>([]);
+    const [requestUserOptions, setRequestUserOptions] = useState<FilterOption[]>([]);
+    const [filteredRequestUser, setFilteredRequestUser] = useState<FilterOption[]>([]);
+    const [attendantUserOptions, setAttendantUserOptions] = useState<FilterOption[]>([]);
+    const [filteredAttendantUser, setFilteredAttendantUser] = useState<FilterOption[]>([]);
+
+    const [isSubCategoryDropdownVisible, setIsSubCategoryDropdownVisible] = useState(false);
+    const [isCategoryDropdownVisible, setIsCategoryDropdownVisible] = useState(false);
+    const [isRequestUserDropdownVisible, setIsRequestUserDropdownVisible] = useState(false);
+    const [isAttendantUserDropdownVisible, setIsAttendantUserDropdownVisible] = useState(false);
+
+    const [loading, setLoading] = useState(false);
+
+    const getCategory = async (value: string) => {
+        if (!value) return;
+        setLoading(true);
+        try {
+            const data = await TicketService.getCategory(value);
+            setCategoryOptions(data.results || []);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getSubCategory = async (endpoint: string, search: string) => {
+        if (!endpoint && !search) return;
+        setLoading(true);
+        try {
+            const data = await TicketService.getSubCategory(endpoint, search);
+            setSubCategoryOptions(data.results || []);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getRequestUser = async (value: string) => {
+        if (!value) return;
+        setLoading(true);
+        try {
+            const data = await TicketService.getRequestUser(value);
+            setRequestUserOptions(data.results || []);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getAttendantUser = async (value: string) => {
+        if (!value) return;
+        setLoading(true);
+        try {
+            const data = await TicketService.getAttendantUser(value);
+            setAttendantUserOptions(data.results || []);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const debouncedSearch = debounce((name: string, value: string) => {
+        if (name === 'request_user') {
+            getRequestUser(value);
+        } else if (name === 'responsability') {
+            getAttendantUser(value);
+        } else if (name === 'problem_type') {
+            getCategory(value);
+        } else if (name === 'problem_sub_type') {
+            console.log('dddddd', value)
+            getSubCategory('', value);
+        }
+    }, 500);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+
         setFilters((prevState) => ({ ...prevState, [name]: value }));
+
+        if (value) {
+            if (name === 'request_user') {
+                const filtered = requestUserOptions.filter((user) =>
+                    user.login_user.toLowerCase().includes(value.toLowerCase())
+                );
+                if (filtered.length === 0) {
+                    debouncedSearch(name, value);
+                } else {
+                    setFilteredRequestUser(filtered);
+                }
+                setIsRequestUserDropdownVisible(true);
+            } else if (name === 'responsability') {
+                const filtered = attendantUserOptions.filter((resp) =>
+                    resp.login_user.toLowerCase().includes(value.toLowerCase())
+                );
+                if (filtered.length === 0) {
+                    debouncedSearch(name, value);
+                } else {
+                    setFilteredAttendantUser(filtered);
+                }
+                setIsAttendantUserDropdownVisible(true);
+            } else if (name === 'problem_type') {
+                const filtered = categoryOptions.filter((user) =>
+                    user.problem_type.toLowerCase().includes(value.toLowerCase())
+                );
+                if (filtered.length === 0) {
+                    debouncedSearch(name, value);
+                } else {
+                    setFilteredCategory(filtered);
+                }
+                setIsCategoryDropdownVisible(true);
+            } else if (name === 'problem_sub_type') {
+                const filtered = subCategoryOptions.filter((user) =>
+                    user.problem_sub_type.toLowerCase().includes(value.toLowerCase())
+                );
+                if (filtered.length === 0) {
+                    debouncedSearch(name, value);
+                } else {
+                    setFilteredSubCategory(filtered);
+                }
+                setIsSubCategoryDropdownVisible(true);
+            }
+        } else {
+            if (name === 'request_user') {
+                setFilteredRequestUser([]);
+                setIsRequestUserDropdownVisible(false);
+            } else if (name === 'responsability') {
+                setFilteredAttendantUser([]);
+                setIsAttendantUserDropdownVisible(false);
+            } else if (name === 'problem_type') {
+                setFilteredCategory([]);
+                setIsCategoryDropdownVisible(false);
+            } else if (name === 'problem_sub_type') {
+                setFilteredSubCategory([]);
+                setIsSubCategoryDropdownVisible(false);
+            }
+        }
+    };
+
+    const handleSuggestionClick = (user: FilterOption, field: string) => {
+        setFilters((prevState) => ({
+            ...prevState,
+            [field]: user[field], // Aqui, o valor do filtro será atribuído dinamicamente com base no nome do campo
+        }));
+
+        // Limpar os dados e esconder o dropdown conforme o campo
+        if (field === 'request_user') {
+            setFilteredRequestUser([]); // Limpar sugestões de 'request_user'
+            setIsRequestUserDropdownVisible(false); // Fechar o dropdown de 'request_user'
+        } else if (field === 'responsability') {
+            setFilteredAttendantUser([]); // Limpar sugestões de 'responsability'
+            setIsAttendantUserDropdownVisible(false); // Fechar o dropdown de 'responsability'
+        } else if (field === 'problem_type') {
+            getSubCategory('', user.problem_type);
+            setFilteredCategory([]); // Limpar sugestões de 'problem_type'
+            setIsCategoryDropdownVisible(false); // Fechar o dropdown de 'problem_type'
+        } else if (field === 'problem_sub_type') {
+            setFilteredSubCategory([]); // Limpar sugestões de 'problem_type'
+            setIsSubCategoryDropdownVisible(false); // Fechar o dropdown de 'problem_type'
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onFilter(filters);  // Chama a função de callback para passar os filtros
+        onFilter(filters);
+    };
+
+    const handleClearFilters = () => {
+        setFilters({
+            request_user: '',
+            responsability: '',
+            problem_type: '',
+            problem_sub_type: '',
+        });
+        setFilteredRequestUser([]);
+        setFilteredAttendantUser([]);
+        setFilteredCategory([]);
+        setIsRequestUserDropdownVisible(false);
+        setIsAttendantUserDropdownVisible(false);
+        setIsCategoryDropdownVisible(false);
+        onFilter(filters);
     };
 
     return (
-        <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-3 container m-auto py-2">
-            {/* Range de Data */}
-            <div>
-                <label>Data de Início:</label>
-                <input 
-                    type="date" 
-                    name="startDate" 
-                    value={filters.startDate} 
-                    onChange={handleInputChange} 
-                    className="border p-2 rounded-md w-full" 
-                />
-            </div>
-            <div>
-                <label>Data de Fim:</label>
-                <input 
-                    type="date" 
-                    name="endDate" 
-                    value={filters.endDate} 
-                    onChange={handleInputChange} 
-                    className="border p-2 rounded-md w-full" 
-                />
+        <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-4 gap-3 container m-auto">
+                {/* Usuário Solicitante */}
+                <div className="relative">
+                    <label>Usuário Solicitante:</label>
+                    <input
+                        type="text"
+                        name="request_user"
+                        value={filters.request_user}
+                        onChange={handleInputChange}
+                        className="border p-2 rounded-md w-full"
+                    />
+
+                    {isRequestUserDropdownVisible && !loading && filteredRequestUser.length > 0 && (
+                        <ul className="absolute bg-white border border-gray-300 max-h-60 overflow-auto z-10">
+                            {filteredRequestUser.map((user) => (
+                                <li
+                                    key={user.login_user}
+                                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                                    onClick={() => handleSuggestionClick(user, 'request_user')}
+                                >
+                                    {user.complete_user_name}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+
+                {/* Responsabilidade */}
+                <div className="relative">
+                    <label>Responsabilidade:</label>
+                    <input
+                        type="text"
+                        name="responsability"
+                        value={filters.responsability}
+                        onChange={handleInputChange}
+                        className="border p-2 rounded-md w-full"
+                    />
+
+                    {isAttendantUserDropdownVisible && !loading && filteredAttendantUser.length > 0 && (
+                        <ul className="absolute bg-white border border-gray-300 max-h-60 overflow-auto z-10">
+                            {filteredAttendantUser.map((resp) => (
+                                <li
+                                    key={resp.login_user}
+                                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                                    onClick={() => handleSuggestionClick(resp, 'responsability')}
+                                >
+                                    {resp.complete_user_name}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+
+                {/* Categoria */}
+                <div className="relative">
+                    <label>Categoria:</label>
+                    <input
+                        type="text"
+                        name="problem_type"
+                        value={filters.problem_type}
+                        onChange={handleInputChange}
+                        className="border p-2 rounded-md w-full"
+                    />
+
+                    {isCategoryDropdownVisible && !loading && filteredCategory.length > 0 && (
+                        <ul className="absolute bg-white border border-gray-300 max-h-60 overflow-auto z-10">
+                            {filteredCategory.map((cat) => (
+                                <li
+                                    key={cat.problem_type}
+                                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                                    onClick={() => handleSuggestionClick(cat, 'problem_type')}
+                                >
+                                    {cat.problem_type}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+
+                {/* Categoria */}
+                <div className="relative">
+                    <label>Sub Categoria:</label>
+                    <input
+                        type="text"
+                        name="problem_sub_type"
+                        value={filters.problem_sub_type}
+                        onChange={handleInputChange}
+                        className="border p-2 rounded-md w-full"
+                    />
+
+                    {isSubCategoryDropdownVisible && !loading && filteredSubCategory.length > 0 && (
+                        <ul className="absolute bg-white border border-gray-300 max-h-60 overflow-auto z-10">
+                            {filteredSubCategory.map((sub) => (
+                                <li
+                                    key={sub.problem_sub_type}
+                                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                                    onClick={() => handleSuggestionClick(sub, 'problem_sub_type')}
+                                >
+                                    {sub.problem_sub_type}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
             </div>
 
-            {/* Usuário Solicitante */}
-            <div>
-                <label>Usuário Solicitante:</label>
-                <input 
-                    type="text" 
-                    name="usuarioSolicitante" 
-                    value={filters.usuarioSolicitante} 
-                    onChange={handleInputChange} 
-                    className="border p-2 rounded-md w-full" 
-                />
-            </div>
+            {/* Botões de Ação */}
+            <div className="flex items-center justify-end mt-3">
+                <button type="submit" className="bg-blue-500 text-white p-2 rounded-md">
+                    Pesquisar
+                </button>
 
-            {/* Atendente */}
-            <div>
-                <label>Atendente:</label>
-                <input 
-                    type="text" 
-                    name="atendente" 
-                    value={filters.atendente} 
-                    onChange={handleInputChange} 
-                    className="border p-2 rounded-md w-full" 
-                />
-            </div>
-
-            {/* Status */}
-            <div>
-                <label>Status:</label>
-                <select 
-                    name="status" 
-                    value={filters.status} 
-                    onChange={handleInputChange} 
-                    className="border p-2 rounded-md w-full"
+                <button
+                    type="button"
+                    onClick={handleClearFilters}
+                    className="ml-2 bg-gray-500 text-white p-2 rounded-md"
                 >
-                    <option value="">Selecione</option>
-                    <option value="aberto">Aberto</option>
-                    <option value="fechado">Fechado</option>
-                    <option value="em_andamento">Em Andamento</option>
-                </select>
-            </div>
-
-            {/* Categoria */}
-            <div>
-                <label>Categoria:</label>
-                <input 
-                    type="text" 
-                    name="categoria" 
-                    value={filters.categoria} 
-                    onChange={handleInputChange} 
-                    className="border p-2 rounded-md w-full" 
-                />
-            </div>
-
-            {/* Sub-categoria */}
-            <div>
-                <label>Sub-categoria:</label>
-                <input 
-                    type="text" 
-                    name="subCategoria" 
-                    value={filters.subCategoria} 
-                    onChange={handleInputChange} 
-                    className="border p-2 rounded-md w-full" 
-                />
-            </div>
-
-            {/* Número do Chamado */}
-            <div>
-                <label>Número do Chamado:</label>
-                <input 
-                    type="text" 
-                    name="numeroChamado" 
-                    value={filters.numeroChamado} 
-                    onChange={handleInputChange} 
-                    className="border p-2 rounded-md w-full" 
-                />
-            </div>
-
-            {/* Botão de Filtro */}
-            <div>
-                <button type="submit" className="bg-blue-500 text-white p-2 rounded-md w-full">
-                    Aplicar Filtros
+                    Limpar Filtros
                 </button>
             </div>
         </form>

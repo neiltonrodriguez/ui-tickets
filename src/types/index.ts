@@ -9,3 +9,4 @@ export * from './UserInGroup';
 export * from './Attributes';
 export * from './TicketFile';
 export * from './Log';
+export * from './Filter';

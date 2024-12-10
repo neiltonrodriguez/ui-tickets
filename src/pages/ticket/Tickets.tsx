@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { TicketService } from '../../services/api/ticket/TicketService';
-import { Ticket } from "../../types"
+import { FilterState, Ticket } from "../../types"
 import { useNavigate } from 'react-router-dom';
-// import FilterComponent from "../../components/FilterComponent";
+import FilterComponent from "../../components/FilterComponent";
 
 
 const Tickets = () => {
-  // const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState<FilterState | null>(null);
   const [activeTab, setActiveTab] = useState('solicitados');
   const [isAttendant, setAttendant] = useState<boolean | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,7 +15,6 @@ const Tickets = () => {
   const [total1, setTotal1] = useState(0);
   const [ticketsPerPage] = useState(10);
   const [ticketsPerPage1] = useState(10);
-  // const [search, setSearch] = useState('');
   const [pageRange, setPageRange] = useState([1, 5]);
   const [pageRange1, setPageRange1] = useState([1, 5]);
   const navigate = useNavigate();
@@ -27,30 +26,20 @@ const Tickets = () => {
     const userData = localStorage.getItem('user');
     if (userData) {
       const user = JSON.parse(userData);
-      console.log(user)
       setAttendant(user && user.attendant);
     }
   }, []);
 
-  // const handleFilter = (filters: any) => {
-  //     console.log(filters);  // Aqui você pode aplicar os filtros aos seus dados
-  //     // setFilteredData(filters);
-  // };
-
-
-  // useEffect(() => {
-  //   if (!isAttendant) {
-  //     setActiveTab('solicitados')
-  //   } else {
-  //     setActiveTab('atendidos')
-  //   }
-  // }, [isAttendant]);
+  const handleFilter = (filters: any) => {
+    setFilteredData(filters);
+  };
 
 
   const getTicketsServed = async () => {
     try {
+      setLoading(true)
       const offset = (currentPage - 1) * ticketsPerPage;
-      const result = await TicketService.getAllTicketsServed(offset, ticketsPerPage, '');
+      const result = await TicketService.getAllTicketsServed(offset, ticketsPerPage, filteredData);
       setTicket(result.results as Ticket[]);
       setTotal(result.count);
       const totalPages = Math.ceil(result.count / ticketsPerPage);
@@ -70,7 +59,7 @@ const Tickets = () => {
   const getTicketsRequest = async () => {
     try {
       const offset = (currentPage1 - 1) * ticketsPerPage1;
-      const result = await TicketService.getAllTicketsRequest(offset, ticketsPerPage1, '');
+      const result = await TicketService.getAllTicketsRequest(offset, ticketsPerPage1, filteredData);
       setMyTicket(result.results as Ticket[]);
       setTotal1(result.count);
       const totalPages = Math.ceil(result.count / ticketsPerPage1);
@@ -86,8 +75,7 @@ const Tickets = () => {
     }
   };
 
-  useEffect(() => {      
-    console.log(isAttendant)
+  useEffect(() => {
     if (isAttendant) {
       setActiveTab('atendidos')
       getTicketsServed();
@@ -95,7 +83,7 @@ const Tickets = () => {
     } else {
       getTicketsRequest();
     }
-  }, [isAttendant, currentPage, currentPage1]);
+  }, [isAttendant, currentPage, currentPage1, filteredData]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -124,7 +112,7 @@ const Tickets = () => {
 
   return (
     <div className="container mx-auto">
-      {/* <FilterComponent onFilter={handleFilter} /> */}
+      <FilterComponent onFilter={handleFilter} />
       <p className="text-black text-4xl font-bold text-center mb-6">
       </p>
       <div className="border-b-slate-300 border-b-2 flex gap-2 mb-4">

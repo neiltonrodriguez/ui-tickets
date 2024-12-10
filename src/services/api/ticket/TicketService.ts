@@ -1,16 +1,20 @@
+import { FilterState } from "../../../types";
 import { Api } from "../Api";
 import { ApiException } from "../ApiExceptions";
 
-const getAllTicketsServed = async (offset: number = 1, limit: number = 10, search: string = '') => {
+const getAllTicketsServed = async (offset: number = 1, limit: number = 10, filter: FilterState | null) => {
     try {
-        const { data } = await Api.get('/services/list/served',{
-            params: {
-                offset,
-                limit,
-                search
-              },
-            }
-        );
+        // Construção dinâmica da query string com base nos filtros
+        const params: { [key: string]: string | number } = { offset, limit };
+
+        if (filter) {
+            if (filter.request_user) params['request_user'] = filter.request_user;
+            if (filter.responsability) params['responsability'] = filter.responsability;
+            if (filter.problem_type) params['problem_type'] = filter.problem_type;
+            if (filter.problem_sub_type) params['problem_sub_type'] = filter.problem_sub_type;
+            // Adicione mais filtros conforme necessário...
+        }
+        const { data } = await Api.get(`/services/list/served/`, { params });
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')
@@ -18,16 +22,19 @@ const getAllTicketsServed = async (offset: number = 1, limit: number = 10, searc
 
 };
 
-const getAllTicketsRequest = async (offset: number = 1, limit: number = 10, search: string = '') => {
+const getAllTicketsRequest = async (offset: number = 1, limit: number = 10, filter: FilterState | null) => {
     try {
-        const { data } = await Api.get('/services/list/myrequests/',{
-            params: {
-                offset,
-                limit,
-                search
-              },
-            }
-        );
+        // Construção dinâmica da query string com base nos filtros
+        const params: { [key: string]: string | number } = { offset, limit };
+
+        if (filter) {
+            if (filter.request_user) params['request_user'] = filter.request_user;
+            if (filter.responsability) params['responsability'] = filter.responsability;
+            if (filter.problem_type) params['problem_type'] = filter.problem_type;
+            if (filter.problem_sub_type) params['problem_sub_type'] = filter.problem_sub_type;
+            // Adicione mais filtros conforme necessário...
+        }
+        const { data } = await Api.get('/services/list/myrequests/', { params });
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')
@@ -38,6 +45,65 @@ const getAllTicketsRequest = async (offset: number = 1, limit: number = 10, sear
 const getTicketByIDServed = async (id: string) => {
     try {
         const { data } = await Api.get(`/services/item/served/${id}/`);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
+const getRequestUser = async (search: string = '') => {
+    try {
+        const { data } = await Api.get(`/lists/items/requestuser/`, {
+            params: {
+                search
+            },
+        });
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
+const getCategory = async (search: string = '') => {
+    try {
+        const { data } = await Api.get(`/lists/items/category/`, {
+            params: {
+                search
+            },
+        });
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
+const getSubCategory = async (endpoint: string, search: string = '') => {
+    try {
+        const params: { [key: string]: string | number } = {};
+
+        if (search) {
+            if (search) params['search'] = search;
+        }
+        const end = endpoint != '' ? `${endpoint}/` : '';
+        const { data } = await Api.get(`/lists/items/subcategory/${end}`, { params });
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
+
+const getAttendantUser = async (search: string = '') => {
+    try {
+        const { data } = await Api.get(`/lists/items/attendantuser/`, {
+            params: {
+                search
+            },
+        });
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')
@@ -88,6 +154,10 @@ const getHistoryByTicketID = async (id: number) => {
 
 export const TicketService = {
     getHistoryByTicketID,
+    getCategory,
+    getSubCategory,
+    getRequestUser,
+    getAttendantUser,
     getFilesByTicketID,
     getLogsByTicketID,
     getAllTicketsServed,
