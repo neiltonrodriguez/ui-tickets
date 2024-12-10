@@ -8,7 +8,7 @@ import FilterComponent from "../../components/FilterComponent";
 const Tickets = () => {
   const [filteredData, setFilteredData] = useState<FilterState | null>(null);
   const [activeTab, setActiveTab] = useState('solicitados');
-  const [isAttendant, setAttendant] = useState<boolean | null>(null);
+  const [isAttendant, setIsAttendant] = useState<boolean | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPage1, setCurrentPage1] = useState(1);
   const [total, setTotal] = useState(0);
@@ -26,7 +26,7 @@ const Tickets = () => {
     const userData = localStorage.getItem('user');
     if (userData) {
       const user = JSON.parse(userData);
-      setAttendant(user && user.attendant);
+      setIsAttendant(user && user.attendant);
     }
   }, []);
 
@@ -199,7 +199,7 @@ const Tickets = () => {
             <thead>
               <tr className="bg-gray-100">
                 <th className="text-left px-2 uppercase font-semibold text-sm">ID</th>
-                {isAttendant && (<th className="text-left px-2 uppercase font-semibold text-sm">Solicitante</th>)}
+                {/* {isAttendant && (<th className="text-left px-2 uppercase font-semibold text-sm">Solicitante</th>)} */}
                 <th className="text-left px-2 uppercase font-semibold text-sm">Título</th>
                 {isAttendant && (<th className="text-left px-2 uppercase font-semibold text-sm">Categoria</th>)}
                 {isAttendant && (<th className="text-left px-2 uppercase font-semibold text-sm">Sub Categoria</th>)}
@@ -214,7 +214,7 @@ const Tickets = () => {
               {myTicket.map((t: Ticket) => (
                 <tr key={t.id} className="border-t">
                   <td onClick={() => navigate(`/ticket/${t.id}/`)} className="text-left px-2 text-sm">{t.id}</td>
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.request_user}</td>)}
+                  {/* {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.request_user}</td>)} */}
                   <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.title.substring(0, 10)}..</td>
                   {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.problem_type}</td>)}
                   {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}

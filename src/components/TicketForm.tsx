@@ -175,6 +175,9 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                                 />
                             </div>
 
+                           
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Descrição</label>
                                 <textarea
@@ -422,7 +425,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                                 />
                             </div>
                         </div>
-                        {ticket?.sr_sub_type != 19 && (
+                        {ticket?.sr_sub_type == 19 && (
                             <div className="grid grid-cols-3 gap-4 mt-3 p-3">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Divulgação da vaga</label>
@@ -565,14 +568,14 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                     <thead>
                         <tr className="bg-gray-100">
                             <th className="text-left px-2 uppercase font-semibold text-sm">Nome do arquivo</th>
-                            <th className="text-left px-2 uppercase font-semibold text-sm">Link para download</th>
+                           
                         </tr>
                     </thead>
                     <tbody>
                         {ticketFiles.map((t: TicketFile) => (
                             <tr key={t.download_link} className="border-t hover:bg-gray-50 cursor-pointer">
                                 <td className="text-left px-2 text-sm"><a href={t.download_link} download>{t.real_file_name}</a></td>
-                                <td className="text-left px-2 text-sm"><a href={t.download_link} download>{t.download_link}</a></td>
+              
 
                             </tr>
                         ))}

@@ -1,4 +1,4 @@
-import React, {  useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FilterState } from '../types';
 import { TicketService } from '../services/api/ticket/TicketService';
 import debounce from 'lodash/debounce';
@@ -34,6 +34,15 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
     const [isAttendantUserDropdownVisible, setIsAttendantUserDropdownVisible] = useState(false);
 
     const [loading, setLoading] = useState(false);
+    const [isAttendant, setIsAttendant] = useState(false);
+
+    useEffect(() => {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            const user = JSON.parse(userData);
+            setIsAttendant(user && user.attendant);
+        }
+    }, []);
 
     const getCategory = async (value: string) => {
         if (!value) return;
@@ -212,7 +221,7 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
         <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-4 gap-3 container m-auto">
                 {/* Usuário Solicitante */}
-                <div className="relative">
+                {isAttendant && (<div className="relative">
                     <label>Usuário Solicitante:</label>
                     <input
                         type="text"
@@ -236,6 +245,7 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
                         </ul>
                     )}
                 </div>
+                )}
 
                 {/* Responsabilidade */}
                 <div className="relative">
