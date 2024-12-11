@@ -24,9 +24,6 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
         insert_time_end: '',
     });
 
-    const [insertTimeStartOptions, setInsertTimeStartOptions] = useState<FilterOption[]>([]);
-    const [insertTimeEndOptions, setInsertTimeEndOptions] = useState<FilterOption[]>([]);
-
     const [thirdCategoryOptions, setThirdCategoryOptions] = useState<FilterOption[]>([]);
     const [filteredThirdCategory, setFilteredThirdCategory] = useState<FilterOption[]>([]);
     const [assignedGroupOptions, setAssignedGroupOptions] = useState<FilterOption[]>([]);
