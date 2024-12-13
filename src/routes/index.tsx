@@ -20,7 +20,7 @@ export const Rotas = createBrowserRouter([
                 element: <RequireAuth><Tickets /></RequireAuth>,
             },
             {
-                path: "/ticket/:id/:tipo",
+                path: "/ticket/:id/:tipo?",
                 element: <RequireAuth><TicketDetails /></RequireAuth>,
             },
             {

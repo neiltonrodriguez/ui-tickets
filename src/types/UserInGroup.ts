@@ -1,6 +1,6 @@
 export type UserInGroup = {
     id: number
-    username: string;
+    login_user: string;
     email: string;
     phone: string | null;
     cell_phone: string | null;

@@ -50,6 +50,16 @@ const getAllTicketsRequest = async (offset: number = 1, limit: number = 10, filt
 
 };
 
+const getTicketByIDRequest = async (id: string) => {
+    try {
+        const { data } = await Api.get(`/services/item/myrequests/${id}/`);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Error ao logar na Api')
+    }
+
+};
+
 const getTicketByIDServed = async (id: string) => {
     try {
         const { data } = await Api.get(`/services/item/served/${id}/`);
@@ -136,16 +146,6 @@ const getAttendantUser = async (search: string = '') => {
             if (search) params['search'] = search;
         }
         const { data } = await Api.get(`/lists/items/attendantuser/`, {params});
-        return data;
-    } catch (error: any) {
-        return new ApiException(error.message || 'Error ao logar na Api')
-    }
-
-};
-
-const getTicketByIDRequest = async (id: string) => {
-    try {
-        const { data } = await Api.get(`/services/item/myrequest/${id}/`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')

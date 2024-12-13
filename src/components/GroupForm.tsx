@@ -188,7 +188,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
                   <tr key={member.id} className="border-t hover:bg-gray-50 cursor-pointer">
                     <td className="text-left py-3 px-4">
                       <div className="flex items-center justify-between">
-                        <span>{member.username}</span>
+                        <span>{member.login_user}</span>
                         <button
                           onClick={() => addUserInGroup(member.id)}
                           className="bg-green-600 hover:bg-green-400 duration-200 px-2 rounded-md text-white text-lg font-bold">+</button>
@@ -240,7 +240,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
                   <tr key={member.id} className="border-t hover:bg-gray-50 cursor-pointer">
                     <td className="text-left py-3 px-4">
                       <div className="flex items-center justify-between">
-                        <span>{member.username}</span>
+                        <span>{member.login_user}</span>
                         <button
                           onClick={() => removeUserInGroup(member.id)}
                           className="bg-red-600 hover:bg-red-400 duration-200 px-3 rounded-md text-white text-lg font-bold">-</button>

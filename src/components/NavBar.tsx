@@ -24,7 +24,7 @@ const NavBar = () => {
 
     const handleTicketSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && ticketNumber) {
-            navigate(`/ticket/${ticketNumber}/served`)
+            navigate(`/ticket/${ticketNumber}/`)
             // Dispara a requisição com o ticketNumber
             // try {
             //     // Exemplo de requisição (substitua com a lógica de requisição desejada)

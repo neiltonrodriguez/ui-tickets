@@ -10,7 +10,7 @@ type TicketFormProps = {
 const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [ticketFiles, setTicketFiles] = useState<TicketFile[]>([]);
-    // const [historys, setHistorys] = useState<Ticket[]>([]);
+
     const [logs, setLogs] = useState<Log[]>([]);
     // const [isAttendant, setIsAttendant] = useState(true)
     const [activeTab, setActiveTab] = useState('detalhes');
@@ -46,17 +46,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
         }
     };
 
-    // const getHistorys = async () => {
-    //     try {
-    //         if (ticket?.id) {
-    //             const result = await TicketService.getHistoryByTicketID(ticket.id);
-    //             setHistorys(result.results);
-    //         }
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    // };
-
+   
 
     useEffect(() => {
         if (ticketData) {
