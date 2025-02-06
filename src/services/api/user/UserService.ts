@@ -40,7 +40,6 @@ const updateUser = async (users: Users) => {
 };
 
 const createUser = async (users: Users) => {
-  console.log('createuser', users)
   try {
     const { data } = await Api.post('/users/', users);
     return data;

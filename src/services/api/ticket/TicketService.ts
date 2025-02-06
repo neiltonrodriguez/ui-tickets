@@ -122,8 +122,6 @@ const getCategory = async (search: string = '') => {
 };
 
 const getSubCategory = async (endpoint: string, search: string = '') => {
-    console.log('endpoint', endpoint)
-    console.log('search', search)
     try {
         const params: { [key: string]: string | number } = {};
         if (search) {

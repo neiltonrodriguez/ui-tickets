@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Log, Ticket, TicketFile } from '../types';
 import { TicketService } from '../services/api/ticket/TicketService';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 type TicketFormProps = {
     ticketData: Ticket; // Permite que seja null quando criando um novo usuário
@@ -10,19 +11,9 @@ type TicketFormProps = {
 const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [ticketFiles, setTicketFiles] = useState<TicketFile[]>([]);
-
     const [logs, setLogs] = useState<Log[]>([]);
-    // const [isAttendant, setIsAttendant] = useState(true)
     const [activeTab, setActiveTab] = useState('detalhes');
     const navigate = useNavigate();
-
-    // useEffect(() => {
-    //     const userData = localStorage.getItem('user');
-    //     if (userData) {
-    //         const user = JSON.parse(userData);
-    //         setIsAttendant(user && user.attendant);
-    //     }
-    // }, []);
 
     const getFiles = async () => {
         try {
@@ -35,6 +26,36 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
         }
     };
 
+    const handleFile = async (url: string, name: string) => {
+        try {
+            const result = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+                responseType: 'blob',
+            });
+    
+            const downloadUrl = URL.createObjectURL(result.data);
+    
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = name;
+            link.click(); 
+            URL.revokeObjectURL(downloadUrl);
+        } catch (err: any) {
+            if (err?.response) {
+                if (err.response.status === 401) {
+                    alert("Você não tem autorização para fazer esse download")
+                } else {
+                    console.error(`Erro ${err.response.status}: ${err.response.data}`);
+                }
+            } else {
+                alert('erro desconhecido')
+            }
+        }
+    };
+    
+
     const getLogs = async () => {
         try {
             if (ticket?.id) {
@@ -46,7 +67,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
         }
     };
 
-   
+
 
     useEffect(() => {
         if (ticketData) {
@@ -62,9 +83,6 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
             getLogs();
         }
 
-        // if (activeTab === 'historico') {
-        //     getHistorys();
-        // }
     }, [activeTab]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -165,7 +183,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                                 />
                             </div>
 
-                           
+
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
@@ -558,15 +576,15 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                     <thead>
                         <tr className="bg-gray-100">
                             <th className="text-left px-2 uppercase font-semibold text-sm">Nome do arquivo</th>
-                           
+
                         </tr>
                     </thead>
                     <tbody>
                         {ticketFiles.map((t: TicketFile) => (
                             <tr key={t.download_link} className="border-t hover:bg-gray-50 cursor-pointer">
-                                <td className="text-left px-2 text-sm"><a href={t.download_link} download>{t.real_file_name}</a></td>
-              
-
+                                <td className="text-left px-2 text-sm">
+                                <a onClick={() => handleFile(t.download_link, t.real_file_name)}>{t.real_file_name}</a>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

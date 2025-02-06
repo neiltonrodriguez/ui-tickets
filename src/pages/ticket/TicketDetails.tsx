@@ -79,7 +79,6 @@ const UserDetails = () => {
         const versionId = Number(event.target.value);
 
         const tick = historys.find(h => h.version === versionId);
-        console.log(tick)
         setTicket(tick as Ticket);
     };
 
