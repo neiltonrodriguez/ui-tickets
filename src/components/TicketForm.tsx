@@ -125,7 +125,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                         <h3 className='font-bold text-lg'>Dados do solicitante</h3>
                         <div className="grid grid-cols-4 gap-4 ">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Código</label>
+                                <label className="block text-sm font-medium text-gray-700">Nº do chamado</label>
                                 <input
                                     type="text"
                                     name="title"
@@ -333,7 +333,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                                 <input
                                     type="text"
                                     name="title"
-                                    value={ticket?.submit_user}
+                                    value={ticket?.responsibility}
                                     onChange={handleChange}
                                     required
                                     className="mt-1 block w-full p-2 border border-gray-300 rounded-md"

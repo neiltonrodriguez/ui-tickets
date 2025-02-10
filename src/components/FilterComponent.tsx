@@ -6,23 +6,15 @@ import { FaChevronDown } from 'react-icons/fa';
 
 type FilterProps = {
     onFilter: (filters: FilterState) => void;
+    initialFilters: FilterState;
 };
 
 type FilterOption = {
     [key: string]: string;
 };
 
-const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
-    const [filters, setFilters] = useState<FilterState>({
-        request_user: '',
-        responsability: '',
-        problem_type: '',
-        problem_sub_type: '',
-        assigned_group: '',
-        third_level_category: '',
-        insert_time_start: '',
-        insert_time_end: '',
-    });
+const FilterComponent: React.FC<FilterProps> = ({ onFilter, initialFilters }) => {
+    const [filters, setFilters] = useState<FilterState>(initialFilters);
 
     const [thirdCategoryOptions, setThirdCategoryOptions] = useState<FilterOption[]>([]);
     const [filteredThirdCategory, setFilteredThirdCategory] = useState<FilterOption[]>([]);
@@ -46,6 +38,10 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
 
     const [loading, setLoading] = useState(false);
     const [isAttendant, setIsAttendant] = useState(false);
+
+    useEffect(() => {
+        setFilters(initialFilters);
+    }, [initialFilters]);
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
@@ -105,7 +101,6 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
     };
 
     const getRequestUser = async (value: string) => {
-        // if (!value) return;
         setLoading(true);
         try {
             const data = await TicketService.getRequestUser(value);
@@ -119,7 +114,6 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
     };
 
     const getAttendantUser = async (value: string) => {
-        // if (!value) return;
         setLoading(true);
         try {
             const data = await TicketService.getAttendantUser(value);
@@ -133,7 +127,6 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
     };
 
     const getAssignedGroup = async (value: string) => {
-        // if (!value) return;
         setLoading(true);
         try {
             const data = await TicketService.getAssignedGroup(value);
@@ -165,12 +158,17 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        setFilters((prevState) => ({ ...prevState, [name]: value }));
+        setFilters((prevState) => ({
+            ...prevState,
+            [name]: value,
+            [`${name}_display`]: '',
+        }));
 
         if (value) {
             if (name === 'request_user') {
+                console.log('input request_user', e.target)
                 const filtered = requestUserOptions.filter((user) =>
-                    user.login_user.toLowerCase().includes(value.toLowerCase())
+                    user.username.toLowerCase().includes(value.toLowerCase())
                 );
                 if (filtered.length === 0) {
                     debouncedSearch(name, value);
@@ -179,8 +177,9 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
                 }
                 setIsRequestUserDropdownVisible(true);
             } else if (name === 'responsability') {
+                
                 const filtered = attendantUserOptions.filter((resp) =>
-                    resp.login_user.toLowerCase().includes(value.toLowerCase())
+                    resp.username.toLowerCase().includes(value.toLowerCase())
                 );
                 if (filtered.length === 0) {
                     debouncedSearch(name, value);
@@ -267,16 +266,18 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
     const handleSuggestionClick = (user: FilterOption, field: string) => {
         let inputValue = '';
         if (field === 'request_user') {
-            inputValue = field === 'request_user' ? user.login_user : user[field];
+            inputValue = field === 'request_user' ? user.username : user[field];
             setFilters((prevState) => ({
                 ...prevState,
                 [field]: inputValue, 
+                [`${field}_display`]: user.complete_user_name,
             }));
         } else if (field === 'responsability') {
-            inputValue = field === 'responsability' ? user.login_user : user[field];
+            inputValue = field === 'responsability' ? user.username : user[field];
             setFilters((prevState) => ({
                 ...prevState,
                 [field]: inputValue, 
+                [`${field}_display`]: user.complete_user_name,
             }));
         } else if (field === 'problem_type') {
             inputValue = field === 'problem_type' ? user.problem_type : user[field];
@@ -313,12 +314,15 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onFilter(filters);
+
     };
 
     const handleClearFilters = () => {
         setFilters({
             request_user: '',
+            request_user_display: '',
             responsability: '',
+            responsability_display: '',
             problem_type: '',
             problem_sub_type: '',
             assigned_group: '',
@@ -378,8 +382,8 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
                                 id="request_user"
                                 type="text"
                                 name="request_user"
-                                value={filters.request_user}
-                                onChange={handleInputChange}  // Função que filtra o array
+                                value={filters.request_user_display || filters.request_user}
+                                onChange={handleInputChange} 
                                 onFocus={() => setIsRequestUserDropdownVisible(true)}
                                 onBlur={() => setTimeout(() => setIsRequestUserDropdownVisible(false), 200)}  // 
                                 className="border p-2 rounded-md w-full"
@@ -395,7 +399,7 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
                                 {filteredRequestUser.length > 0 ? (
                                     filteredRequestUser.map((user) => (
                                         <li
-                                            key={user.login_user}
+                                            key={user.username}
                                             className="p-2 hover:bg-gray-200 cursor-pointer"
                                             onClick={() => handleSuggestionClick(user, 'request_user')}  // Função de seleção
                                         >
@@ -406,6 +410,7 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
                                     <li className="p-2 text-gray-500">Nenhum resultado</li>
                                 )}
                             </ul>
+                           
                         )}
                     </div>
                 )}
@@ -418,7 +423,7 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
                             id="responsability"
                             type="text"
                             name="responsability"
-                            value={filters.responsability}
+                            value={filters.responsability_display || filters.responsability}
                             onChange={handleInputChange}
                             onFocus={() => setIsAttendantUserDropdownVisible(true)}
                             onBlur={() => setTimeout(() => setIsAttendantUserDropdownVisible(false), 200)}
@@ -432,11 +437,11 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter }) => {
                         <ul className="absolute w-full bg-white border border-gray-300 max-h-60 overflow-auto z-10">
                             {filteredAttendantUser.map((resp) => (
                                 <li
-                                    key={resp.login_user}
+                                    key={resp.username}
                                     className="p-2 hover:bg-gray-200 cursor-pointer"
                                     onClick={() => handleSuggestionClick(resp, 'responsability')}
                                 >
-                                    {resp.login_user}
+                                    {resp.complete_user_name}
                                 </li>
                             ))}
                         </ul>

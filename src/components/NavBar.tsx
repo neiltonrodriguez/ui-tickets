@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import Logo from '../assets/img/logo-sysaid.png';
+import Logo from '../assets/img/logo-service-desk.png';
 import { FaRightFromBracket } from "react-icons/fa6";
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/auth/AuthContext';
@@ -25,17 +25,6 @@ const NavBar = () => {
     const handleTicketSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && ticketNumber) {
             navigate(`/ticket/${ticketNumber}/`)
-            // Dispara a requisição com o ticketNumber
-            // try {
-            //     // Exemplo de requisição (substitua com a lógica de requisição desejada)
-            //     const response = await fetch(`/api/tickets/${ticketNumber}`);
-            //     const data = await response.json();
-            //     console.log('Dados do ticket:', data);
-            //     // Navegar para outra página ou realizar alguma outra ação com os dados recebidos
-            //     navigate(`/ticket/${ticketNumber}`);
-            // } catch (error) {
-            //     console.error('Erro ao buscar ticket:', error);
-            // }
         }
     };
   

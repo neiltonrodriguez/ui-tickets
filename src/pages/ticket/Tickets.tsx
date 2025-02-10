@@ -21,6 +21,18 @@ const Tickets = () => {
   const [ticket, setTicket] = useState<Ticket[]>([]);
   const [myTicket, setMyTicket] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const defaultFilters: FilterState = {
+    request_user: '',
+    request_user_display: '',
+    responsability: '',
+    responsability_display: '',
+    problem_type: '',
+    problem_sub_type: '',
+    assigned_group: '',
+    third_level_category: '',
+    insert_time_start: '',
+    insert_time_end: '',
+};
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -112,7 +124,7 @@ const Tickets = () => {
 
   return (
     <div className="container mx-auto">
-      <FilterComponent onFilter={handleFilter} />
+      <FilterComponent onFilter={handleFilter} initialFilters={filteredData || defaultFilters} />
       <p className="text-black text-4xl font-bold text-center mb-6">
       </p>
       <div className="border-b-slate-300 border-b-2 flex gap-2 mb-4">
@@ -133,7 +145,7 @@ const Tickets = () => {
           <table className="min-w-full bg-white border border-gray-200 table-auto">
             <thead>
               <tr className="bg-gray-100">
-                <th className="text-left px-2 uppercase font-semibold text-sm">ID</th>
+                <th className="text-left px-2 uppercase font-semibold text-sm">Nº</th>
                 {isAttendant && (<th className="text-left px-2 uppercase font-semibold text-sm">Solicitante</th>)}
                 <th className="text-left px-2 uppercase font-semibold text-sm">Título</th>
                 {isAttendant && (<th className="text-left px-2 uppercase font-semibold text-sm">Categoria</th>)}
@@ -148,17 +160,17 @@ const Tickets = () => {
             <tbody>
               {ticket.map((t: Ticket) => (
                 <tr key={t.id} className="border-t hover:bg-gray-50 cursor-pointer">
-                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.id}</td>
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.request_user}</td>)}
-                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.title.substring(0, 10)}..</td>
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.problem_type}</td>)}
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.third_level_category}</td>)}
-                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.assigned_group}</td>
-                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.status}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.id}</td>
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.request_user}</td>)}
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.title.substring(0, 10)}..</td>
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.problem_type}</td>)}
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.third_level_category}</td>)}
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.assigned_group}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.status}</td>
 
-                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.insert_time}</td>
-                  <td onClick={() => navigate(`/ticket/${t.id}/served`)} className="text-left px-2 text-sm">{t.close_time}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.insert_time}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.close_time}</td>
                 </tr>
               ))}
             </tbody>
@@ -198,7 +210,7 @@ const Tickets = () => {
           <table className="min-w-full bg-white border border-gray-200 table-auto">
             <thead>
               <tr className="bg-gray-100">
-                <th className="text-left px-2 uppercase font-semibold text-sm">ID</th>
+                <th className="text-left px-2 uppercase font-semibold text-sm">Nº</th>
                 {/* {isAttendant && (<th className="text-left px-2 uppercase font-semibold text-sm">Solicitante</th>)} */}
                 <th className="text-left px-2 uppercase font-semibold text-sm">Título</th>
                 {isAttendant && (<th className="text-left px-2 uppercase font-semibold text-sm">Categoria</th>)}
@@ -212,18 +224,17 @@ const Tickets = () => {
             </thead>
             <tbody>
               {myTicket.map((t: Ticket) => (
-                <tr key={t.id} className="border-t">
+                <tr key={t.id} className="border-t hover:bg-gray-50 cursor-pointer">
                   <td onClick={() => navigate(`/ticket/${t.id}/`)} className="text-left px-2 text-sm">{t.id}</td>
-                  {/* {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.request_user}</td>)} */}
-                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.title.substring(0, 10)}..</td>
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.problem_type}</td>)}
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
-                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.third_level_category}</td>)}
-                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.assigned_group}</td>
-                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.status}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.title.substring(0, 10)}..</td>
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.problem_type}</td>)}
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.problem_sub_type}</td>)}
+                  {isAttendant && (<td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.third_level_category}</td>)}
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.assigned_group}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.status}</td>
 
-                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.insert_time}</td>
-                  <td onClick={() => navigate(`/ticket/${t.id}/request`)} className="text-left px-2 text-sm">{t.close_time}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.insert_time}</td>
+                  <td onClick={() => navigate(`/ticket/${t.id}`)} className="text-left px-2 text-sm">{t.close_time}</td>
                 </tr>
               ))}
             </tbody>

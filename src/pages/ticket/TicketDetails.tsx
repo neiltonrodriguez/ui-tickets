@@ -13,10 +13,10 @@ const UserDetails = () => {
 
 
 
-    const getByIdServed = async () => {
+    const getByID = async () => {
         try {
             setLoading(true);
-            const result = await TicketService.getTicketByIDServed(id as '');
+            const result = await TicketService.getTicketByID(id as '');
             setTicket(result);
 
         } catch (err) {
@@ -27,18 +27,6 @@ const UserDetails = () => {
         }
     };
 
-    const getByIdRequest = async () => {
-        try {
-            setLoading(true);
-            const result = await TicketService.getTicketByIDRequest(id as '');
-            setTicket(result);
-        } catch (err) {
-            setError('Erro ao carregar os dados do usuário.');
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const getHistorys = async () => {
         try {
@@ -52,17 +40,7 @@ const UserDetails = () => {
     };
 
     const switchTicket = () => {
-        if (tipo === 'served') {
-            getByIdServed();
-
-        } else if (tipo === 'request') {
-            getByIdRequest();
-
-        } else if (tipo === undefined) {
-            getByIdRequest();
-            getByIdServed();
-
-        }
+        getByID();
     };
 
     useEffect(() => {

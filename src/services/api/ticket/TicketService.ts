@@ -18,7 +18,7 @@ const getAllTicketsServed = async (offset: number = 1, limit: number = 10, filte
             if (filter.insert_time_end) params['insert_time_end'] = filter.insert_time_end;
             // Adicione mais filtros conforme necessário...
         }
-        const { data } = await Api.get(`/services/list/served/`, { params });
+        const { data } = await Api.get(`/services/`, { params });
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')
@@ -42,7 +42,7 @@ const getAllTicketsRequest = async (offset: number = 1, limit: number = 10, filt
             if (filter.insert_time_end) params['insert_time_end'] = filter.insert_time_end;
             // Adicione mais filtros conforme necessário...
         }
-        const { data } = await Api.get('/services/list/myrequests/', { params });
+        const { data } = await Api.get('/services/myrequests/', { params });
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')
@@ -50,19 +50,9 @@ const getAllTicketsRequest = async (offset: number = 1, limit: number = 10, filt
 
 };
 
-const getTicketByIDRequest = async (id: string) => {
+const getTicketByID = async (id: string) => {
     try {
-        const { data } = await Api.get(`/services/item/myrequests/${id}/`);
-        return data;
-    } catch (error: any) {
-        return new ApiException(error.message || 'Error ao logar na Api')
-    }
-
-};
-
-const getTicketByIDServed = async (id: string) => {
-    try {
-        const { data } = await Api.get(`/services/item/served/${id}/`);
+        const { data } = await Api.get(`/services/${id}/`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao logar na Api')
@@ -194,6 +184,5 @@ export const TicketService = {
     getLogsByTicketID,
     getAllTicketsServed,
     getAllTicketsRequest,
-    getTicketByIDServed,
-    getTicketByIDRequest
+    getTicketByID
 }
