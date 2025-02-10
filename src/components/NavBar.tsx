@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/img/logo-service-desk.png';
 import { FaRightFromBracket } from "react-icons/fa6";
 import { useContext, useState, useEffect } from 'react';
@@ -24,11 +25,10 @@ const NavBar = () => {
 
     const handleTicketSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && ticketNumber) {
-            navigate(`/ticket/${ticketNumber}/`)
+            navigate(`/ticket/${ticketNumber}`)
         }
     };
-  
-    // const isAdmin = auth.user && auth.user.admin; 
+
     return (
         <>
             <div className="w-full h-20 bg-slate-300">

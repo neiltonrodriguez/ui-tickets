@@ -5,7 +5,7 @@ import { Ticket } from '../../types';
 import TicketForm from '../../components/TicketForm'; // Importando o UserForm
 
 const UserDetails = () => {
-    const { id, tipo } = useParams<{ id: string, tipo: string }>();
+    const { id } = useParams<{ id: string}>();
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -39,13 +39,9 @@ const UserDetails = () => {
         }
     };
 
-    const switchTicket = () => {
-        getByID();
-    };
-
     useEffect(() => {
-        switchTicket();
-    }, [id, tipo]);
+        getByID();
+    }, [id]);
 
     useEffect(() => {
         if (ticket?.id) {
