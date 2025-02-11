@@ -5,7 +5,6 @@ import { ApiException } from "../ApiExceptions";
 
 const getAllLdap = async (offset: number = 1, limit: number = 10) => {
     try {
-
         const { data } = await Api.get('/ldaps/',
             {
                 params: {
@@ -18,7 +17,6 @@ const getAllLdap = async (offset: number = 1, limit: number = 10) => {
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao fazer getAll de Ldap na Api')
     }
-
 };
 
 const getLdapByID = async (id: string) => {

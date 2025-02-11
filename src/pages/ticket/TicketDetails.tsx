@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { TicketService } from '../../services/api/ticket/TicketService';
 import { Ticket } from '../../types';
 import TicketForm from '../../components/TicketForm'; // Importando o UserForm
+import { useNavigate } from 'react-router-dom';
+import { ApiException } from "../../services/api/ApiExceptions";
 
 const UserDetails = () => {
     const { id } = useParams<{ id: string}>();
@@ -10,18 +12,21 @@ const UserDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [historys, setHistorys] = useState<Ticket[]>([]);
-
-
+    const navigate = useNavigate()
 
     const getByID = async () => {
         try {
             setLoading(true);
             const result = await TicketService.getTicketByID(id as '');
-            setTicket(result);
+            if (result instanceof ApiException) {
+                alert(result.message);
+                navigate('/'); 
+            } else {
+                setTicket(result); 
+            }
 
-        } catch (err) {
+        } catch (err: any) {
             setError('Erro ao carregar os dados do usuário.');
-            console.error(err);
         } finally {
             setLoading(false);
         }

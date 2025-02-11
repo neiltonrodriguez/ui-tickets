@@ -34,7 +34,7 @@ const updateUser = async (users: Users) => {
     const { data } = await Api.put(`/users/${users.id}/`, userWithoutId);
     return data;
   } catch (error: any) {
-    alert(error.response?.data?.detail || error.message || 'Erro ao atualizar o usuário')
+    alert(error.response?.data?.detail[0]?.source || 'Erro ao atualizar o usuário')
     return new ApiException(error.response?.data?.detail || error.message || 'Erro ao atualizar o usuário');
   }
 };

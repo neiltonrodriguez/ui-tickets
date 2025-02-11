@@ -166,7 +166,6 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilter, initialFilters }) =>
 
         if (value) {
             if (name === 'request_user') {
-                console.log('input request_user', e.target)
                 const filtered = requestUserOptions.filter((user) =>
                     user.username.toLowerCase().includes(value.toLowerCase())
                 );

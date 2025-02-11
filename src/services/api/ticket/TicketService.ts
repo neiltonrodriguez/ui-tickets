@@ -55,7 +55,7 @@ const getTicketByID = async (id: string) => {
         const { data } = await Api.get(`/services/${id}/`);
         return data;
     } catch (error: any) {
-        return new ApiException(error.message || 'Error ao logar na Api')
+        return new ApiException(error.response.data.detail || 'Error ao logar na Api')
     }
 
 };

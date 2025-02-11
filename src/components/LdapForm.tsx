@@ -133,7 +133,6 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
     const getOUs = async () => {
         try {
             const result = await LdapService.getOusByLdap(ldap.id as number)
-            console.log(result)
             setOus(result.results)
         } catch (error) {
             console.log(error)
@@ -143,7 +142,6 @@ const LdapForm: React.FC<LdapFormProps> = ({ ldapData, onSave, isEditMode }) => 
     const getAttributes = async () => {
         try {
             const result = await LdapService.getAttributesByLdap(ldap.id as number)
-            console.log(result)
             setAttributes(result.results)
         } catch (error) {
             console.log(error)

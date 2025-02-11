@@ -57,7 +57,6 @@ const getUsersAvailableForGroups = async (offset: number = 1, limit: number = 5,
                 limit,
             }
         });
-        // console.log('usuarios disponiveis', data)
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao deletar User na Api')

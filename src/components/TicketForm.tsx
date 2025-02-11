@@ -112,11 +112,6 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticketData }) => {
                     className={`px-4 py-2 ${activeTab === 'logs' ? 'bg-slate-400' : ''}`}>
                     Logs
                 </button>
-                {/* <button
-                    onClick={() => handleTabChange('historico')}
-                    className={`px-4 py-2 ${activeTab === 'historico' ? 'bg-slate-400' : ''}`}>
-                    Histórico
-                </button> */}
 
             </div>
             {activeTab === 'detalhes' && (
