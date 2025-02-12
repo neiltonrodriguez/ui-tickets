@@ -23,11 +23,11 @@ const NavBar = () => {
         }
     }, []);
 
-    const handleTicketSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && ticketNumber) {
-            navigate(`/ticket/${ticketNumber}`)
-        }
-    };
+    // const handleTicketSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    //     if (e.key === 'Enter' && ticketNumber) {
+    //         navigate(`/ticket/${ticketNumber}`)
+    //     }
+    // };
 
     return (
         <>
@@ -36,16 +36,17 @@ const NavBar = () => {
                     <img src={Logo} className="h-12" />
 
                      {/* Campo de entrada para o ticketNumber */}
-                     <form>
+                     <div>
                         <input 
                             type="text" 
                             className="rounded-md px-3 py-2" 
                             placeholder="Digite o número do chamado"
                             value={ticketNumber}
                             onChange={(e) => setTicketNumber(e.target.value)}
-                            onKeyDown={handleTicketSubmit}  // Evento que captura o Enter
+                            // onKeyDown={handleTicketSubmit}  // Evento que captura o Enter
                         />
-                    </form>
+                        <button type='button' className="bg-blue-700 rounded-md p-2 mx-2 text-white" onClick={() => navigate(`/ticket/${ticketNumber}`)}>BUSCAR</button>
+                    </div>
                     
                     <ul className="flex text-white flex-row gap-5 items-center justify-center">
                         { isAdmin && (

@@ -10,5 +10,6 @@ export interface Users {
     email?: string;
     phone?: string;
     cell_phone?: string;
+    source?: string;
     complete_user_name?: string | null;
 }
