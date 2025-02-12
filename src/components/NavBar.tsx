@@ -23,40 +23,47 @@ const NavBar = () => {
         }
     }, []);
 
-    // const handleTicketSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    //     if (e.key === 'Enter' && ticketNumber) {
-    //         navigate(`/ticket/${ticketNumber}`)
-    //     }
-    // };
-
     return (
         <>
             <div className="w-full h-20 bg-slate-300">
                 <div className="w-full px-5 py-3 flex items-center justify-between max-w-7xl m-auto">
                     <img src={Logo} className="h-12" />
 
-                     {/* Campo de entrada para o ticketNumber */}
-                     <div>
-                        <input 
-                            type="text" 
-                            className="rounded-md px-3 py-2" 
+                    {/* Campo de entrada para o ticketNumber */}
+                    <div>
+                        <input
+                            type="number"
+                            className="rounded-md px-3 py-2 disabled:bg-gray-50 no-spinner"
                             placeholder="Digite o número do chamado"
                             value={ticketNumber}
                             onChange={(e) => setTicketNumber(e.target.value)}
-                            // onKeyDown={handleTicketSubmit}  // Evento que captura o Enter
                         />
-                        <button type='button' className="bg-blue-700 rounded-md p-2 mx-2 text-white" onClick={() => navigate(`/ticket/${ticketNumber}`)}>BUSCAR</button>
+                        <button
+                            type='button'
+                            className="bg-blue-700 rounded-md p-2 mx-2 text-white disabled:bg-gray-400"
+                            disabled={!ticketNumber} 
+                            onClick={() => {
+                                if (!isNaN(Number(ticketNumber))) { // Verifica se ticketNumber não está vazio
+                                    navigate(`/ticket/${ticketNumber}`);
+                                } else {
+                                    console.log("typeof", typeof(ticketNumber))
+                                    alert("Por favor, digite um número de ticket."); 
+                                }
+                            }}
+                        >
+                            BUSCAR
+                        </button>
                     </div>
-                    
+
                     <ul className="flex text-white flex-row gap-5 items-center justify-center">
-                        { isAdmin && (
-                        <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/user">Usuario</Link>
+                        {isAdmin && (
+                            <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/user">Usuario</Link>
                         )}
-                        { isAdmin && (
-                        <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/group">Grupos</Link>
+                        {isAdmin && (
+                            <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/group">Grupos</Link>
                         )}
-                        { isAdmin && (
-                        <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/ldap">LDAP</Link>
+                        {isAdmin && (
+                            <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/ldap">LDAP</Link>
                         )}
                         <Link className="text-slate-800 hover:text-amber-600 duration-200 font-bold" to="/">Chamados</Link>
                         <button onClick={handleLogout} type="button"><FaRightFromBracket /></button>
