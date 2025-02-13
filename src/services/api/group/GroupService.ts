@@ -49,12 +49,13 @@ const getGroupOfUser = async (user: string) => {
 
 };
 
-const getUsersAvailableForGroups = async (offset: number = 1, limit: number = 5, id: string) => {
+const getUsersAvailableForGroups = async (offset: number = 1, limit: number = 5, id: string, search: string = '') => {
     try {
         const { data } = await Api.get(`/usergroups/${id}/availableusers`, {
             params: {
                 offset,
                 limit,
+                search,
             }
         });
         return data;
@@ -64,12 +65,13 @@ const getUsersAvailableForGroups = async (offset: number = 1, limit: number = 5,
 
 };
 
-const getUserInGroup = async (offset: number = 1, limit: number = 5, name: string) => {
+const getUserInGroup = async (offset: number = 1, limit: number = 5, name: string, search: string = '') => {
     try {
         const { data } = await Api.get(`/usergroups/${name}/usersingroup`, {
             params: {
                 offset,
                 limit,
+                search,
             }
         });
         return data;

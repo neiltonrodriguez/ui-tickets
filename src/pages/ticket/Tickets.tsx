@@ -7,7 +7,7 @@ import FilterComponent from "../../components/FilterComponent";
 
 const Tickets = () => {
   const [filteredData, setFilteredData] = useState<FilterState | null>(null);
-  const [activeTab, setActiveTab] = useState('solicitados');
+  const [activeTab, setActiveTab] = useState('');
   const [isAttendant, setIsAttendant] = useState<boolean | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPage1, setCurrentPage1] = useState(1);
@@ -88,8 +88,17 @@ const Tickets = () => {
   };
 
   useEffect(() => {
-    if (isAttendant) {
+    if (activeTab == '') {
       setActiveTab('atendidos')
+    } 
+    if (activeTab == '' && !isAttendant) {
+      setActiveTab('solicitados')
+    } 
+  }, [isAttendant, currentPage1, currentPage]);
+
+  useEffect(() => {
+    if (isAttendant) {
+      // setActiveTab('atendidos')
       getTicketsServed();
       getTicketsRequest();
     } else {
@@ -251,7 +260,7 @@ const Tickets = () => {
             {Array.from({ length: pageRange1[1] - pageRange1[0] + 1 }, (_, index) => (
               <button
                 key={pageRange1[0] + index}
-                onClick={() => updatePageRange1(pageRange[0] + index)}
+                onClick={() => updatePageRange1(pageRange1[0] + index)}
                 className={`mx-1 px-3 py-1 rounded ${currentPage1 === pageRange1[0] + index ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
               >
                 {pageRange1[0] + index}

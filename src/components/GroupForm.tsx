@@ -23,6 +23,8 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
   const [total1, setTotal1] = useState(0);
   const [usersPerPage1] = useState(5);
   const [pageRange1, setPageRange1] = useState([1, 5]);
+  const [searchTermAvailable, setSearchTermAvailable] = useState<string>('');
+  const [searchTermInGroup, setSearchTermInGroup] = useState<string>('');
 
   // Atualiza o estado do grupo quando o `groupData` mudar
   useEffect(() => {
@@ -31,10 +33,10 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
     }
   }, [groupData]);
 
-  const getMembros = async () => {
+  const getMembros = async (searchTerm: string = '') => {
     try {
       const offset = (currentPage1 - 1) * usersPerPage1; // Calcular o offset
-      const result = await GroupService.getUserInGroup(offset, usersPerPage1, group.ref_id as '');
+      const result = await GroupService.getUserInGroup(offset, usersPerPage1, group.ref_id as '', searchTerm);
       setUserInGroup(result.results);
       setTotal1(result.count);
 
@@ -53,13 +55,13 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
 
   // Recarregar membros quando a página mudar
   useEffect(() => {
-    getMembros();
-  }, [currentPage1, group]); // Adiciona `currentPage1` como dependência para disparar a requisição
+    getMembros(searchTermInGroup);
+  }, [currentPage1, group, activeTab]); // Adiciona `currentPage1` como dependência para disparar a requisição
 
-  const getUsersAvailable = async () => {
+  const getUsersAvailable = async (searchTerm: string = '') => {
     try {
       const offset = (currentPage - 1) * usersPerPage; // Calcular o offset
-      const result = await GroupService.getUsersAvailableForGroups(offset, usersPerPage, group.ref_id);
+      const result = await GroupService.getUsersAvailableForGroups(offset, usersPerPage, group.ref_id, searchTerm);
       setUsersAvailable(result.results);
       setTotal(result.count);
 
@@ -78,7 +80,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
 
   useEffect(() => {
     if (activeTab === 'membros') {
-      getUsersAvailable();
+      getUsersAvailable(searchTermAvailable);
     }
   }, [currentPage, usersPerPage, activeTab]);
 
@@ -86,12 +88,13 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
     setActiveTab(tab);
   };
 
-  const addUserInGroup = async (id: number) => {
+  const addUserInGroup = async (id: string) => {
+
     try {
       const user: UserForGroup = {
         user_name: id,
       };
-      await GroupService.insertUserForGroup(group.ref_id, user);
+      await GroupService.insertUserForGroup(group.group_name, user);
       getMembros();
       getUsersAvailable();
     } catch (err) {
@@ -99,7 +102,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
     }
   };
 
-  const removeUserInGroup = async (id: number) => {
+  const removeUserInGroup = async (id: string) => {
     try {
       const user: UserForGroup = {
         user_name: id,
@@ -130,6 +133,19 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
 
     setPageRange1([newRangeStart, newRangeEnd]);
   };
+
+  const handleSearchAvailable = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      getUsersAvailable(searchTermAvailable);
+    }
+  };
+
+  const handleSearchInGroup = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      getMembros(searchTermInGroup);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -177,6 +193,16 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
       {activeTab === 'membros' && (
         <div className="overflow-x-auto flex gap-5 justify-">
           <div className="w-full">
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Pesquisar usuários disponíveis"
+                value={searchTermAvailable}
+                onChange={(e) => setSearchTermAvailable(e.target.value)}
+                onKeyDown={handleSearchAvailable}
+                className="px-4 py-2 border rounded-md w-full"
+              />
+            </div>
             <table className="w-full bg-white border border-gray-200">
               <thead>
                 <tr className="bg-gray-100">
@@ -185,12 +211,12 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
               </thead>
               <tbody>
                 {usersAvailable.map((member: UserInGroup) => (
-                  <tr key={member.id} className="border-t hover:bg-gray-50 cursor-pointer">
+                  <tr key={member.username} className="border-t hover:bg-gray-50 cursor-pointer">
                     <td className="text-left py-3 px-4">
                       <div className="flex items-center justify-between">
-                        <span>{member.username}</span>
+                        <span>{member.complete_user_name}</span>
                         <button
-                          onClick={() => addUserInGroup(member.id)}
+                          onClick={() => addUserInGroup(member.username)}
                           className="bg-green-600 hover:bg-green-400 duration-200 px-2 rounded-md text-white text-lg font-bold">+</button>
                       </div>
                     </td>
@@ -229,6 +255,16 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
           </div>
 
           <div className="w-full">
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Pesquisar membros no grupo"
+                value={searchTermInGroup}
+                onChange={(e) => setSearchTermInGroup(e.target.value)}
+                onKeyDown={handleSearchInGroup}
+                className="px-4 py-2 border rounded-md w-full"
+              />
+            </div>
             <table className="w-full bg-white border border-gray-200">
               <thead>
                 <tr className="bg-gray-100">
@@ -237,12 +273,12 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
               </thead>
               <tbody>
                 {userInGroup.map((member: UserInGroup) => (
-                  <tr key={member.id} className="border-t hover:bg-gray-50 cursor-pointer">
+                  <tr key={member.username} className="border-t hover:bg-gray-50 cursor-pointer">
                     <td className="text-left py-3 px-4">
                       <div className="flex items-center justify-between">
-                        <span>{member.username}</span>
+                        <span>{member.complete_user_name}</span>
                         <button
-                          onClick={() => removeUserInGroup(member.id)}
+                          onClick={() => removeUserInGroup(member.username)}
                           className="bg-red-600 hover:bg-red-400 duration-200 px-3 rounded-md text-white text-lg font-bold">-</button>
                       </div>
                     </td>

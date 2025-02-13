@@ -11,7 +11,7 @@ const Group = () => {
     const [usersPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');  // Termo de pesquisa
     const navigate = useNavigate();
-    
+
 
     // Função para buscar os grupos com o termo de pesquisa
     const getAllGroups = async (search: string) => {
@@ -33,10 +33,16 @@ const Group = () => {
         getAllGroups('');  // Passa uma string vazia para buscar todos os grupos no início
     }, [currentPage, usersPerPage]);
 
-    
+
     // Função que será chamada quando o usuário digitar o termo de pesquisa
     const handleSearch = () => {
         getAllGroups(searchTerm);  // Chama a função de buscar com o termo de pesquisa
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();  // Chama a função de busca quando a tecla "Enter" for pressionada
+        }
     };
 
     const totalPages = Math.ceil(total / usersPerPage);
@@ -46,22 +52,25 @@ const Group = () => {
     return (
         <div className="container mx-auto">
             <p className="text-black text-4xl font-bold text-center mb-6">Grupos</p>
-        
+
             {/* Campo de pesquisa com o botão */}
             <div className="mb-4 flex items-center">
-                <input
-                    type="text"
-                    placeholder="Pesquisar por nome do grupo"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}  // Atualiza o termo de pesquisa
-                    className="px-4 py-2 border rounded-md w-64"
-                />
-                <button
-                    onClick={handleSearch}  // Chama a função de busca ao clicar no botão
-                    className="ml-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 duration-200"
-                >
-                    Pesquisar
-                </button>
+                <form>
+                    <input
+                        type="text"
+                        placeholder="Pesquisar por nome do grupo"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}  // Atualiza o termo de pesquisa
+                        onKeyDown={handleKeyDown}
+                        className="px-4 py-2 border rounded-md w-64"
+                    />
+                    <button
+                        onClick={handleSearch}  // Chama a função de busca ao clicar no botão
+                        className="ml-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 duration-200"
+                    >
+                        Pesquisar
+                    </button>
+                </form>
             </div>
 
             <div className="overflow-x-auto">
