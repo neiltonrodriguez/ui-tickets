@@ -9,7 +9,7 @@ const getAllTicketsServed = async (offset: number = 1, limit: number = 10, filte
 
         if (filter) {
             if (filter.request_user) params['request_user'] = filter.request_user;
-            if (filter.responsability) params['responsability'] = filter.responsability;
+            if (filter.responsability) params['responsibility'] = filter.responsability;
             if (filter.problem_type) params['problem_type'] = filter.problem_type;
             if (filter.problem_sub_type) params['problem_sub_type'] = filter.problem_sub_type;
             if (filter.assigned_group) params['assigned_group'] = filter.assigned_group;
@@ -33,7 +33,7 @@ const getAllTicketsRequest = async (offset: number = 1, limit: number = 10, filt
 
         if (filter) {
             if (filter.request_user) params['request_user'] = filter.request_user;
-            if (filter.responsability) params['responsability'] = filter.responsability;
+            if (filter.responsability) params['responsibility'] = filter.responsability;
             if (filter.problem_type) params['problem_type'] = filter.problem_type;
             if (filter.problem_sub_type) params['problem_sub_type'] = filter.problem_sub_type;
             if (filter.assigned_group) params['assigned_group'] = filter.assigned_group;

@@ -7,7 +7,7 @@ import FilterComponent from "../../components/FilterComponent";
 
 const Tickets = () => {
   const [filteredData, setFilteredData] = useState<FilterState | null>(null);
-  const [activeTab, setActiveTab] = useState('');
+  const [activeTab, setActiveTab] = useState('atendidos');
   const [isAttendant, setIsAttendant] = useState<boolean | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPage1, setCurrentPage1] = useState(1);
@@ -88,17 +88,18 @@ const Tickets = () => {
   };
 
   useEffect(() => {
-    if (activeTab == '') {
-      setActiveTab('atendidos')
-    } 
-    if (activeTab == '' && !isAttendant) {
-      setActiveTab('solicitados')
-    } 
-  }, [isAttendant, currentPage1, currentPage]);
+    console.log('usuario isAttendant', isAttendant)
+    setTimeout(() => {
+      if (!isAttendant && isAttendant != null) {
+        console.log('usuario isAttendant', isAttendant)
+        setActiveTab('solicitados');
+      }
+    }, 1000);
+    
+  }, [isAttendant]);
 
   useEffect(() => {
     if (isAttendant) {
-      // setActiveTab('atendidos')
       getTicketsServed();
       getTicketsRequest();
     } else {
