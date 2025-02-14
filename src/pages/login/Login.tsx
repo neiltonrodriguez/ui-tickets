@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/auth/AuthContext";
 import { DomainService } from "../../services/api/domain/DomainService";
 import { useNavigate } from "react-router-dom";
 import fotoTutorial from '../../assets/img/tutorial.jpg';
+import videoTutorial from '../../assets/video/video_tutorial.mp4';
 import { Domain } from "../../types";
 
 export const Login = () => {
@@ -58,9 +59,9 @@ export const Login = () => {
               &times;
             </button>
             <iframe
-              width="560"
-              height="315"
-              src="https://www.youtube.com/embed/Xgjo8mSDW1c?si=8yQX1eJlEFVTdKU5"
+              width="640"
+              height="480"
+              src={videoTutorial}
               title="YouTube video player"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -74,8 +75,9 @@ export const Login = () => {
         <div className="flex max-w-7xl h-screen items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div className="flex-1 w-full md:flex items-center hidden justify-center">
             <div>
-              <h1 className="text-4xl font-bold">NOSSO <span >SERVICE</span><span className="text-red-500">DESK</span> MUDOU!</h1>
-              <h1 className="text-2xl text-center text-gray-500 font-semibold">clique no vídeo e confira as mudanças</h1>
+              <h1 className="text-4xl text-center font-bold">OS DADOS PERMANECEM!</h1>
+              <h1 className="text-4xl text-center font-bold">O <span >service</span><span className="text-red-500">desk</span> foi encerrado, mas os dados ainda estão acessíveis.</h1>
+              <h1 className="text-2xl text-center text-gray-500 font-semibold">clique no vídeo e confira</h1>
               <div className="flex items-center justify-center gap-3 mt-5">
                 <img
                   onClick={abrirVideo}
