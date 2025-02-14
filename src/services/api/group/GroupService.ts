@@ -93,7 +93,7 @@ const insertUserForGroup = async (groupName: string, username: UserForGroup) => 
 
 const deleteUserForGroup = async (groupName: string, username: UserForGroup) => {
     try {
-        const { data } = await Api.delete(`/usergroups/${groupName}/usertogroup/${username.user_name}/`);
+        const { data } = await Api.delete(`/usergroups/${groupName}/usertogroup/${username.id}/`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Error ao deletar User na Api')

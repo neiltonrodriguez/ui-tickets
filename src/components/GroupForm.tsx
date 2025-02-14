@@ -88,13 +88,13 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
     setActiveTab(tab);
   };
 
-  const addUserInGroup = async (id: string) => {
+  const addUserInGroup = async (id: number) => {
 
     try {
       const user: UserForGroup = {
-        user_name: id,
+        id: id,
       };
-      await GroupService.insertUserForGroup(group.group_name, user);
+      await GroupService.insertUserForGroup(group.ref_id, user);
       getMembros();
       getUsersAvailable();
     } catch (err) {
@@ -102,10 +102,10 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
     }
   };
 
-  const removeUserInGroup = async (id: string) => {
+  const removeUserInGroup = async (id: number) => {
     try {
       const user: UserForGroup = {
-        user_name: id,
+        id: id,
       };
       await GroupService.deleteUserForGroup(group.ref_id, user);
       getMembros();
@@ -216,7 +216,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
                       <div className="flex items-center justify-between">
                         <span>{member.complete_user_name}</span>
                         <button
-                          onClick={() => addUserInGroup(member.username)}
+                          onClick={() => addUserInGroup(member.id)}
                           className="bg-green-600 hover:bg-green-400 duration-200 px-2 rounded-md text-white text-lg font-bold">+</button>
                       </div>
                     </td>
@@ -278,7 +278,7 @@ const GroupForm: React.FC<GroupFormProps> = ({ groupData }) => {
                       <div className="flex items-center justify-between">
                         <span>{member.complete_user_name}</span>
                         <button
-                          onClick={() => removeUserInGroup(member.username)}
+                          onClick={() => removeUserInGroup(member.id)}
                           className="bg-red-600 hover:bg-red-400 duration-200 px-3 rounded-md text-white text-lg font-bold">-</button>
                       </div>
                     </td>
